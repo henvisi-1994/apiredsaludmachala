@@ -83,4 +83,8 @@ class NoticiasController extends Controller
     {
         //
     }
+    public function noticias(){
+        return view('noticias');
+    }
 }
+
