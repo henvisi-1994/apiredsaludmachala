@@ -10,17 +10,18 @@
         </tr>
     </thead>
     <tbody>
-        @foreach ($noticias as $noticia )
-        <tr>
-            <td>{{$noticia -> titulo_noticia}}</td>
-            <td><img src="{{$noticia -> imagen_noticia}}" alt="" height="200"></td>
-            <td>{{$noticia -> descripcion_noticia}}</td>
-            <td>{{$noticia -> fecha_inicio_noticia}}</td>
-            <td>{{$noticia -> fecha_fin_noticia}}</td>
+
+        <tr v-for="noticia in noticias">
+            <td>@{{noticia.titulo_noticia}}</td>
+            <td><img :src="noticia.imagen_noticia" class="image-fluid img-thumbnail"></td>
+
+            <td>@{{noticia.descripcion_noticia}}</td>
+            <td>@{{noticia.fecha_inicio_noticia}}</td>
+            <td>@{{noticia.fecha_fin_noticia}}</td>
             <td><button class="btn btn-primary" >editar</button></td>
-            <td><button class="btn btn-danger" wire:click="destroy({{$noticia -> id_noticia}})">elininar</button></td>
+            <td><button class="btn btn-danger" >elininar</button></td>
         </tr>
-        @endforeach
+
     </tbody>
 </table>
-{{$noticias->links()}}
+

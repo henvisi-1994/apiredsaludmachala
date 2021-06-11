@@ -1,5 +1,4 @@
-<div class="modal fade" v-if="edit==false"
-id="modal-noticia">
+<div class="modal fade" id="modal-noticia">
     <div class="modal-dialog">
         <div class="modal-content bg-default">
             <div class="modal-header">
@@ -7,7 +6,7 @@ id="modal-noticia">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span></button>
                 </div>
-                <form method="POST" v-on:submit.prevent="createNoticia">
+                <form method="POST" v-on:submit.prevent="updateNoticia">
                     @include('livewire.noticia.form')
 
                     <div class="modal-footer justify-content-between">
@@ -22,7 +21,3 @@ id="modal-noticia">
     <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
-<div v-else >
-    @include('livewire.noticia.edit')
-
-</div>

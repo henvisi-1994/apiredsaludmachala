@@ -36,7 +36,28 @@ class NoticiasController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $v =$this->validate(request(), [
+            'titulo_noticia' => 'required|string',
+            'imagen_noticia' => 'required|string',
+            'descripcion_noticia' => 'required|string',
+            'fecha_inicio_noticia' => 'required',
+            'fecha_fin_noticia' => 'required'
+        ]);
+        if ($v)
+        {
+          $noticia= new Noticias();
+          $noticia->titulo_noticia=$request->input('titulo_noticia');
+          $noticia->imagen_noticia=$request->input('imagen_noticia');
+          $noticia->descripcion_noticia=$request->input('descripcion_noticia');
+          $noticia->fecha_inicio_noticia=$request->input('fecha_inicio_noticia');
+          $noticia->fecha_fin_noticia=$request->input('fecha_fin_noticia');
+          $noticia->save();
+          return redirect('noticias');
+        }
+        else
+        {
+          return back()->withInput($request->all());
+        }
     }
 
     /**

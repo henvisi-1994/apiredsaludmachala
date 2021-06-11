@@ -1,20 +1,20 @@
 <div class="modal-body">
                     <div class="form-group">
                         <label>Titulo</label>
-                        <input name="titulo_noticia" class="form-control" wire:model="titulo_noticia" type="text">
+                        <input  class="form-control" v-model="noticia.titulo_noticia" type="text">
                             @error('titulo_noticia') <span>{{$message}}
                             </span>@enderror
                     </div>
                     <div class="form-group">
                         <label>Descripcion</label>
-                        <input name="descripcion_noticia" class="form-control" wire:model="descripcion_noticia" type="text">
+                        <input  class="form-control" v-model="noticia.descripcion_noticia" type="text">
                             @error('descripcion_noticia') <span>{{$message}}
                             </span>@enderror
                     </div>
 
                     <div class="form-group">
                         <label>Imagen</label>
-                        <input name="imagen_noticia" class="form-control" wire:model="imagen_noticia" type="text">
+                        <input  class="form-control" v-model="noticia.imagen_noticia" type="text">
                             @error('imagen_noticia') <span>{{$message}}
                             </span>@enderror
                     </div>
@@ -24,14 +24,14 @@
                             <div class="form-group">
                             <label>Fecha de Inicio
                             </label>
-                            <input type="text"  class="form-control" name="fecha_inicio_noticia" wire:model="fecha_inicio_noticia" value="2012-05-15 21:05" id="datetimepickeri">
+                            <input type="datetime-local"  class="form-control"  v-model="noticia.fecha_inicio_noticia" >
                             @error('fecha_inicio_noticia') <span>{{$message}}
                             </span>@enderror
                             </div>
                             <div class="form-group">
                             <label>Fecha de Finalizacion
                             </label>
-                    <input type="text" class="form-control" name="fecha_fin_noticia" wire:model="fecha_fin_noticia" value="2012-05-15 21:05" id="datetimepickerf">
+                    <input type="datetime-local" class="form-control"  v-model="noticia.fecha_fin_noticia"  >
                     @error('fecha_fin_noticia') <span>{{$message}}
                             </span>@enderror
                 </div>
