@@ -42,17 +42,15 @@ const app = new Vue({
             'titulo_noticia': '',
             'imagen_noticia': '',
             'descripcion_noticia': '',
+            'hora_inicio_noticia':'',
             'fecha_inicio_noticia': '',
+            'hora_fin_noticia':'',
             'fecha_fin_noticia': ''
         },
-        fillNoticia: {
-            'titulo_noticia': '',
-            'imagen_noticia': '',
-            'descripcion_noticia': '',
-            'fecha_inicio_noticia': '',
-            'fecha_fin_noticia': ''
+
+
         },
-    },
+
     methods: {
         getNoticias() {
             let urlNoticias = "api/noticias";
@@ -62,6 +60,8 @@ const app = new Vue({
         },
         createNoticia: function() {
             let urlGuardarNoticia = "api/noticias";
+            this.noticia.fecha_inicio_noticia=this.noticia.fecha_inicio_noticia+' '+this.noticia.hora_inicio_noticia;
+            this.noticia.fecha_fin_noticia=this.noticia.fecha_fin_noticia+' '+this.noticia.hora_fin_noticia;
             axios
                 .post(urlGuardarNoticia, this.noticia)
                 .then(response => {
@@ -83,18 +83,23 @@ const app = new Vue({
         },
         editNoticia: function(noticia) {
             this.edit=true;
-            this.fillNoticia.titulo_noticia = noticia.titulo_noticia;
-            this.fillNoticia.imagen_noticia = noticia.imagen_noticia;
-            this.fillNoticia.descripcion_noticia = noticia.descripcion_noticia;
-            this.fillNoticia.fecha_inicio_noticia = noticia.fecha_inicio_noticia;
-            this.fillNoticia.fecha_fin_noticia = noticia.fecha_fin_noticia;
-            $('#modal-noticia').modal('show');
+            this.noticia.id_noticia=noticia.id_noticia;
+            this.noticia.titulo_noticia = noticia.titulo_noticia;
+            this.noticia.imagen_noticia = noticia.imagen_noticia;
+            this.noticia.descripcion_noticia = noticia.descripcion_noticia;
+            this.noticia.fecha_inicio_noticia = noticia.fecha_inicio_noticia.split(' ')[0];
+            this.noticia.fecha_fin_noticia = noticia.fecha_fin_noticia.split(' ')[0];
+            this.noticia.hora_inicio_noticia = noticia.fecha_inicio_noticia.split(' ')[1];
+            this.noticia.hora_fin_noticia = noticia.fecha_fin_noticia.split(' ')[1];
+            $('#modal-noticiaed').modal('show');
         },
-        updateNoticia: function(id) {
-            let url = "api/noticias" + id;
-            axios.post(url, this.fillNoticia).then(response => {
+        updateNoticia: function() {
+            let url = "api/noticias/"+this.noticia.id_noticia;
+            this.noticia.fecha_inicio_noticia=this.noticia.fecha_inicio_noticia+' '+this.noticia.hora_inicio_noticia;
+            this.noticia.fecha_fin_noticia=this.noticia.fecha_fin_noticia+' '+this.noticia.hora_fin_noticia;
+            axios.put(url, this.noticia).then(response => {
                 this.getNoticias();
-                this.fillNoticia = {
+                this.noticia = {
                     'titulo_noticia': '',
                     'imagen_noticia': '',
                     'descripcion_noticia': '',
@@ -102,10 +107,18 @@ const app = new Vue({
                     'fecha_fin_noticia': ''
                 };
                 this.errors = [];
-                $('#modal-noticia').modal('hide');
+                $('#modal-noticiaed').modal('hide');
                 toastr.success('Noticia actualizada con éxito');
             }).catch(error => {
                 this.errors = error.response.data;
+            });
+            console.log(url);
+        },
+        deleteNoticia: function(id_noticia) {
+            let url = "api/noticias/" + id_noticia;
+            axios.delete(url).then(response => {
+                this.getNoticias();
+                toastr.success('Noticia eliminada con éxito');
             });
         },
     }

@@ -1,4 +1,4 @@
-<div class="modal fade" v-if="edit==false"
+<div class="modal fade"
 id="modal-noticia">
     <div class="modal-dialog">
         <div class="modal-content bg-default">
@@ -22,7 +22,5 @@ id="modal-noticia">
     <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
-<div v-else >
-    @include('livewire.noticia.edit')
 
-</div>
+

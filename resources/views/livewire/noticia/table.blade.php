@@ -18,8 +18,8 @@
             <td>@{{noticia.descripcion_noticia}}</td>
             <td>@{{noticia.fecha_inicio_noticia}}</td>
             <td>@{{noticia.fecha_fin_noticia}}</td>
-            <td><button class="btn btn-primary" >editar</button></td>
-            <td><button class="btn btn-danger" >elininar</button></td>
+            <td><button class="btn btn-primary" v-on:click.prevent="editNoticia(noticia)">Editar</button></td>
+            <td><button class="btn btn-danger" v-on:click.prevent="deleteNoticia(noticia.id_noticia)">Eliminar</button></td>
         </tr>
 
     </tbody>

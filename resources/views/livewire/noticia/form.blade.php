@@ -24,15 +24,32 @@
                             <div class="form-group">
                             <label>Fecha de Inicio
                             </label>
-                            <input type="datetime-local"  class="form-control"  v-model="noticia.fecha_inicio_noticia" >
+                            <input type="date"  class="form-control"  v-model="noticia.fecha_inicio_noticia" >
                             @error('fecha_inicio_noticia') <span>{{$message}}
                             </span>@enderror
                             </div>
+
+                            <div class="form-group">
+                                <label>Hora de Inicio
+                                </label>
+                                <input type="time"  class="form-control"  v-model="noticia.hora_inicio_noticia" >
+                                @error('hora_inicio_noticia') <span>{{$message}}
+                                </span>@enderror
+                                </div>
+
                             <div class="form-group">
                             <label>Fecha de Finalizacion
                             </label>
-                    <input type="datetime-local" class="form-control"  v-model="noticia.fecha_fin_noticia"  >
+                    <input type="date" class="form-control"  v-model="noticia.fecha_fin_noticia"  >
                     @error('fecha_fin_noticia') <span>{{$message}}
                             </span>@enderror
                 </div>
+
+                <div class="form-group">
+                    <label>Hora de Finalizacion
+                    </label>
+                    <input type="time"  class="form-control"  v-model="noticia.hora_fin_noticia" >
+                    @error('hora_fin_noticia') <span>{{$message}}
+                    </span>@enderror
+                    </div>
                 </div>

@@ -20,4 +20,5 @@
 
 <!-- modal -->
 @include("livewire.noticia.$view")
+@include('livewire.noticia.edit')
 

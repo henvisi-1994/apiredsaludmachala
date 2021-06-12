@@ -1912,14 +1912,9 @@ var app = new Vue({
       'titulo_noticia': '',
       'imagen_noticia': '',
       'descripcion_noticia': '',
+      'hora_inicio_noticia': '',
       'fecha_inicio_noticia': '',
-      'fecha_fin_noticia': ''
-    },
-    fillNoticia: {
-      'titulo_noticia': '',
-      'imagen_noticia': '',
-      'descripcion_noticia': '',
-      'fecha_inicio_noticia': '',
+      'hora_fin_noticia': '',
       'fecha_fin_noticia': ''
     }
   },
@@ -1936,6 +1931,8 @@ var app = new Vue({
       var _this2 = this;
 
       var urlGuardarNoticia = "api/noticias";
+      this.noticia.fecha_inicio_noticia = this.noticia.fecha_inicio_noticia + ' ' + this.noticia.hora_inicio_noticia;
+      this.noticia.fecha_fin_noticia = this.noticia.fecha_fin_noticia + ' ' + this.noticia.hora_fin_noticia;
       axios.post(urlGuardarNoticia, this.noticia).then(function (response) {
         _this2.getNoticias();
 
@@ -1955,21 +1952,26 @@ var app = new Vue({
     },
     editNoticia: function editNoticia(noticia) {
       this.edit = true;
-      this.fillNoticia.titulo_noticia = noticia.titulo_noticia;
-      this.fillNoticia.imagen_noticia = noticia.imagen_noticia;
-      this.fillNoticia.descripcion_noticia = noticia.descripcion_noticia;
-      this.fillNoticia.fecha_inicio_noticia = noticia.fecha_inicio_noticia;
-      this.fillNoticia.fecha_fin_noticia = noticia.fecha_fin_noticia;
-      $('#modal-noticia').modal('show');
+      this.noticia.id_noticia = noticia.id_noticia;
+      this.noticia.titulo_noticia = noticia.titulo_noticia;
+      this.noticia.imagen_noticia = noticia.imagen_noticia;
+      this.noticia.descripcion_noticia = noticia.descripcion_noticia;
+      this.noticia.fecha_inicio_noticia = noticia.fecha_inicio_noticia.split(' ')[0];
+      this.noticia.fecha_fin_noticia = noticia.fecha_fin_noticia.split(' ')[0];
+      this.noticia.hora_inicio_noticia = noticia.fecha_inicio_noticia.split(' ')[1];
+      this.noticia.hora_fin_noticia = noticia.fecha_fin_noticia.split(' ')[1];
+      $('#modal-noticiaed').modal('show');
     },
-    updateNoticia: function updateNoticia(id) {
+    updateNoticia: function updateNoticia() {
       var _this3 = this;
 
-      var url = "api/noticias" + id;
-      axios.post(url, this.fillNoticia).then(function (response) {
+      var url = "api/noticias/" + this.noticia.id_noticia;
+      this.noticia.fecha_inicio_noticia = this.noticia.fecha_inicio_noticia + ' ' + this.noticia.hora_inicio_noticia;
+      this.noticia.fecha_fin_noticia = this.noticia.fecha_fin_noticia + ' ' + this.noticia.hora_fin_noticia;
+      axios.put(url, this.noticia).then(function (response) {
         _this3.getNoticias();
 
-        _this3.fillNoticia = {
+        _this3.noticia = {
           'titulo_noticia': '',
           'imagen_noticia': '',
           'descripcion_noticia': '',
@@ -1977,10 +1979,21 @@ var app = new Vue({
           'fecha_fin_noticia': ''
         };
         _this3.errors = [];
-        $('#modal-noticia').modal('hide');
+        $('#modal-noticiaed').modal('hide');
         toastr.success('Noticia actualizada con éxito');
       })["catch"](function (error) {
         _this3.errors = error.response.data;
+      });
+      console.log(url);
+    },
+    deleteNoticia: function deleteNoticia(id_noticia) {
+      var _this4 = this;
+
+      var url = "api/noticias/" + id_noticia;
+      axios["delete"](url).then(function (response) {
+        _this4.getNoticias();
+
+        toastr.success('Noticia eliminada con éxito');
       });
     }
   }
