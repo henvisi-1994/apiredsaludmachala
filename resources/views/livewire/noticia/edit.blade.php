@@ -6,7 +6,8 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span></button>
                 </div>
-                <form method="PUT" v-on:submit.prevent="updateNoticia">
+                <form method="POST" v-on:submit.prevent="updateNoticia">
+                    @csrf
                     @include('livewire.noticia.form')
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-outline-light" data-dismiss="modal">Close</button>

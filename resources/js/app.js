@@ -36,20 +36,18 @@ const app = new Vue({
         this.getNoticias();
     },
     data: {
-        edit:false,
+        edit: false,
         noticias: [],
         noticia: {
-            'titulo_noticia': '',
-            'imagen_noticia': '',
-            'descripcion_noticia': '',
-            'hora_inicio_noticia':'',
-            'fecha_inicio_noticia': '',
-            'hora_fin_noticia':'',
-            'fecha_fin_noticia': ''
-        },
-
-
-        },
+            titulo_noticia: "",
+            imagen_noticia: "",
+            descripcion_noticia: "",
+            hora_inicio_noticia: "",
+            fecha_inicio_noticia: "",
+            hora_fin_noticia: "",
+            fecha_fin_noticia: ""
+        }
+    },
 
     methods: {
         getNoticias() {
@@ -60,8 +58,14 @@ const app = new Vue({
         },
         createNoticia: function() {
             let urlGuardarNoticia = "api/noticias";
-            this.noticia.fecha_inicio_noticia=this.noticia.fecha_inicio_noticia+' '+this.noticia.hora_inicio_noticia;
-            this.noticia.fecha_fin_noticia=this.noticia.fecha_fin_noticia+' '+this.noticia.hora_fin_noticia;
+            this.noticia.fecha_inicio_noticia =
+                this.noticia.fecha_inicio_noticia +
+                " " +
+                this.noticia.hora_inicio_noticia;
+            this.noticia.fecha_fin_noticia =
+                this.noticia.fecha_fin_noticia +
+                " " +
+                this.noticia.hora_fin_noticia;
             axios
                 .post(urlGuardarNoticia, this.noticia)
                 .then(response => {
@@ -82,44 +86,62 @@ const app = new Vue({
                 });
         },
         editNoticia: function(noticia) {
-            this.edit=true;
-            this.noticia.id_noticia=noticia.id_noticia;
+            this.edit = true;
+            this.noticia.id_noticia = noticia.id_noticia;
             this.noticia.titulo_noticia = noticia.titulo_noticia;
             this.noticia.imagen_noticia = noticia.imagen_noticia;
             this.noticia.descripcion_noticia = noticia.descripcion_noticia;
-            this.noticia.fecha_inicio_noticia = noticia.fecha_inicio_noticia.split(' ')[0];
-            this.noticia.fecha_fin_noticia = noticia.fecha_fin_noticia.split(' ')[0];
-            this.noticia.hora_inicio_noticia = noticia.fecha_inicio_noticia.split(' ')[1];
-            this.noticia.hora_fin_noticia = noticia.fecha_fin_noticia.split(' ')[1];
-            $('#modal-noticiaed').modal('show');
+            this.noticia.fecha_inicio_noticia = noticia.fecha_inicio_noticia.split(
+                " "
+            )[0];
+            this.noticia.fecha_fin_noticia = noticia.fecha_fin_noticia.split(
+                " "
+            )[0];
+            this.noticia.hora_inicio_noticia = noticia.fecha_inicio_noticia.split(
+                " "
+            )[1];
+            this.noticia.hora_fin_noticia = noticia.fecha_fin_noticia.split(
+                " "
+            )[1];
+            $("#modal-noticiaed").modal("show");
         },
         updateNoticia: function() {
-            let url = "api/noticias/"+this.noticia.id_noticia;
-            this.noticia.fecha_inicio_noticia=this.noticia.fecha_inicio_noticia+' '+this.noticia.hora_inicio_noticia;
-            this.noticia.fecha_fin_noticia=this.noticia.fecha_fin_noticia+' '+this.noticia.hora_fin_noticia;
-            axios.put(url, this.noticia).then(response => {
-                this.getNoticias();
-                this.noticia = {
-                    'titulo_noticia': '',
-                    'imagen_noticia': '',
-                    'descripcion_noticia': '',
-                    'fecha_inicio_noticia': '',
-                    'fecha_fin_noticia': ''
-                };
-                this.errors = [];
-                $('#modal-noticiaed').modal('hide');
-                toastr.success('Noticia actualizada con éxito');
-            }).catch(error => {
-                this.errors = error.response.data;
-            });
-            console.log(url);
+            let url = "api/updatenoticia/" + this.noticia.id_noticia;
+            this.noticia.fecha_inicio_noticia =
+                this.noticia.fecha_inicio_noticia +
+                "T" +
+                this.noticia.hora_inicio_noticia;
+            this.noticia.fecha_fin_noticia =
+                this.noticia.fecha_fin_noticia +
+                " " +
+                this.noticia.hora_fin_noticia;
+            axios
+                .post(url, this.noticia)
+                .then(response => {
+                    this.getNoticias();
+                    this.noticia = {
+                        titulo_noticia: "",
+                        imagen_noticia: "",
+                        descripcion_noticia: "",
+                        hora_inicio_noticia: "",
+                        fecha_inicio_noticia: "",
+                        hora_fin_noticia: "",
+                        fecha_fin_noticia: ""
+                    };
+                    this.getNoticias();
+                    $("#modal-noticiaed").modal("hide");
+                    toastr.success("Noticia actualizada con éxito");
+                })
+                .catch(error => {
+                    this.errors = error.response.data;
+                });
         },
         deleteNoticia: function(id_noticia) {
             let url = "api/noticias/" + id_noticia;
             axios.delete(url).then(response => {
                 this.getNoticias();
-                toastr.success('Noticia eliminada con éxito');
+                toastr.success("Noticia eliminada con éxito");
             });
-        },
+        }
     }
 });

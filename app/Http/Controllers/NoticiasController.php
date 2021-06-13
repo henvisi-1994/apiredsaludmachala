@@ -101,8 +101,7 @@ class NoticiasController extends Controller
         ]);
         if ($v)
         {
-          $noticia = Noticias::whereSl($id)->firstOrFail();
-          $noticia= new Noticias();
+          $noticia = Noticias::find($id)->firstOrFail();
           $noticia->titulo_noticia=$request->input('titulo_noticia');
           $noticia->imagen_noticia=$request->input('imagen_noticia');
           $noticia->descripcion_noticia=$request->input('descripcion_noticia');

@@ -1909,13 +1909,13 @@ var app = new Vue({
     edit: false,
     noticias: [],
     noticia: {
-      'titulo_noticia': '',
-      'imagen_noticia': '',
-      'descripcion_noticia': '',
-      'hora_inicio_noticia': '',
-      'fecha_inicio_noticia': '',
-      'hora_fin_noticia': '',
-      'fecha_fin_noticia': ''
+      titulo_noticia: "",
+      imagen_noticia: "",
+      descripcion_noticia: "",
+      hora_inicio_noticia: "",
+      fecha_inicio_noticia: "",
+      hora_fin_noticia: "",
+      fecha_fin_noticia: ""
     }
   },
   methods: {
@@ -1931,8 +1931,8 @@ var app = new Vue({
       var _this2 = this;
 
       var urlGuardarNoticia = "api/noticias";
-      this.noticia.fecha_inicio_noticia = this.noticia.fecha_inicio_noticia + ' ' + this.noticia.hora_inicio_noticia;
-      this.noticia.fecha_fin_noticia = this.noticia.fecha_fin_noticia + ' ' + this.noticia.hora_fin_noticia;
+      this.noticia.fecha_inicio_noticia = this.noticia.fecha_inicio_noticia + " " + this.noticia.hora_inicio_noticia;
+      this.noticia.fecha_fin_noticia = this.noticia.fecha_fin_noticia + " " + this.noticia.hora_fin_noticia;
       axios.post(urlGuardarNoticia, this.noticia).then(function (response) {
         _this2.getNoticias();
 
@@ -1956,35 +1956,38 @@ var app = new Vue({
       this.noticia.titulo_noticia = noticia.titulo_noticia;
       this.noticia.imagen_noticia = noticia.imagen_noticia;
       this.noticia.descripcion_noticia = noticia.descripcion_noticia;
-      this.noticia.fecha_inicio_noticia = noticia.fecha_inicio_noticia.split(' ')[0];
-      this.noticia.fecha_fin_noticia = noticia.fecha_fin_noticia.split(' ')[0];
-      this.noticia.hora_inicio_noticia = noticia.fecha_inicio_noticia.split(' ')[1];
-      this.noticia.hora_fin_noticia = noticia.fecha_fin_noticia.split(' ')[1];
-      $('#modal-noticiaed').modal('show');
+      this.noticia.fecha_inicio_noticia = noticia.fecha_inicio_noticia.split(" ")[0];
+      this.noticia.fecha_fin_noticia = noticia.fecha_fin_noticia.split(" ")[0];
+      this.noticia.hora_inicio_noticia = noticia.fecha_inicio_noticia.split(" ")[1];
+      this.noticia.hora_fin_noticia = noticia.fecha_fin_noticia.split(" ")[1];
+      $("#modal-noticiaed").modal("show");
     },
     updateNoticia: function updateNoticia() {
       var _this3 = this;
 
-      var url = "api/noticias/" + this.noticia.id_noticia;
-      this.noticia.fecha_inicio_noticia = this.noticia.fecha_inicio_noticia + ' ' + this.noticia.hora_inicio_noticia;
-      this.noticia.fecha_fin_noticia = this.noticia.fecha_fin_noticia + ' ' + this.noticia.hora_fin_noticia;
-      axios.put(url, this.noticia).then(function (response) {
+      var url = "api/updatenoticia/" + this.noticia.id_noticia;
+      this.noticia.fecha_inicio_noticia = this.noticia.fecha_inicio_noticia + "T" + this.noticia.hora_inicio_noticia;
+      this.noticia.fecha_fin_noticia = this.noticia.fecha_fin_noticia + " " + this.noticia.hora_fin_noticia;
+      axios.post(url, this.noticia).then(function (response) {
         _this3.getNoticias();
 
         _this3.noticia = {
-          'titulo_noticia': '',
-          'imagen_noticia': '',
-          'descripcion_noticia': '',
-          'fecha_inicio_noticia': '',
-          'fecha_fin_noticia': ''
+          titulo_noticia: "",
+          imagen_noticia: "",
+          descripcion_noticia: "",
+          hora_inicio_noticia: "",
+          fecha_inicio_noticia: "",
+          hora_fin_noticia: "",
+          fecha_fin_noticia: ""
         };
-        _this3.errors = [];
-        $('#modal-noticiaed').modal('hide');
-        toastr.success('Noticia actualizada con éxito');
+
+        _this3.getNoticias();
+
+        $("#modal-noticiaed").modal("hide");
+        toastr.success("Noticia actualizada con éxito");
       })["catch"](function (error) {
         _this3.errors = error.response.data;
       });
-      console.log(url);
     },
     deleteNoticia: function deleteNoticia(id_noticia) {
       var _this4 = this;
@@ -1993,7 +1996,7 @@ var app = new Vue({
       axios["delete"](url).then(function (response) {
         _this4.getNoticias();
 
-        toastr.success('Noticia eliminada con éxito');
+        toastr.success("Noticia eliminada con éxito");
       });
     }
   }
