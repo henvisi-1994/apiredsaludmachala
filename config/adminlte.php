@@ -244,7 +244,38 @@ return [
         [
             'text' => 'Noticias',
             'url'  => 'noticias',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fas fa-newspaper',
+        ],
+        [
+            'text' => 'CentrosMedicos',
+            'url'  => 'centrosmedicos',
+            'icon' => 'fas fa-fw fa-hospital',
+        ],
+        [
+            'text' => 'Citas',
+            'url'  => 'citas',
+            'icon' => 'fas fa-fw fa-calendar-day',
+        ],
+
+        [
+            'text' => 'Especialidades',
+            'url'  => 'especialidades',
+            'icon' => 'fas fa-fw fa-stethoscope',
+        ],
+        [
+            'text' => 'Horarios',
+            'url'  => 'horarios',
+            'icon' => 'fas fa-fw fa-clock',
+        ],
+        [
+            'text' => 'Horas',
+            'url'  => 'horas',
+            'icon' => 'fas fa-fw fa-stopwatch',
+        ],
+        [
+            'text' => 'Medicos',
+            'url'  => 'medicos',
+            'icon' => 'fas fa-fw fa-user-md',
         ],
 
         ['header' => 'account_settings'],

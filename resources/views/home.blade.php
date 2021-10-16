@@ -4,7 +4,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
+                <div class="card-header">{{ __('Bienvenido a la API de la Red de Salud de Machala.') }}</div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -12,8 +12,8 @@
                             {{ session('status') }}
                         </div>
                     @endif
+                    <img src="img/mujer con celular.png" class="img-fluid" alt="imagenmedicoconcelular">
 
-                    {{ __('You are logged in!') }}
                 </div>
             </div>
         </div>

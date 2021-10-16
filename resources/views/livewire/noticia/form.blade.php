@@ -5,18 +5,19 @@
                             @error('titulo_noticia') <span>{{$message}}
                             </span>@enderror
                     </div>
-                    <div class="form-group">
-                        <label>Descripcion</label>
-                        <input  class="form-control" v-model="noticia.descripcion_noticia" type="text">
-                            @error('descripcion_noticia') <span>{{$message}}
-                            </span>@enderror
-                    </div>
 
                     <div class="form-group">
-                        <label>Imagen</label>
-                        <input  class="form-control" v-model="noticia.imagen_noticia" type="text">
-                            @error('imagen_noticia') <span>{{$message}}
-                            </span>@enderror
+                        <label for="exampleFormControlTextarea2">Descripcion</label>
+                        <textarea class="form-control rounded-0" v-model="noticia.descripcion_noticia" id="exampleFormControlTextarea2" rows="3"></textarea>
+                        @error('descripcion_noticia')<span>{{$message}}
+                    </span>@enderror
+                    </div>
+
+                    <div class="form-group files">
+                        <label>
+                            Imagen
+                        </label>
+                        <input class="form-control"  name="imagen_noticia" type="file" v-on:change="getImagenNoticia" >                             </input>
                     </div>
 
                    <!-- <x-adminlte-input-file name="imagen_noticia" wire:model="imagen_noticia" label="Imagen de Noticia" placeholder="Seleccione un archivo..." disable-feedback/>-->
@@ -52,4 +53,6 @@
                     @error('hora_fin_noticia') <span>{{$message}}
                     </span>@enderror
                     </div>
+                    {{ csrf_field() }}
                 </div>
+

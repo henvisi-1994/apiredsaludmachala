@@ -1,0 +1,161 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
+
+
+
+class UsuarioController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $noticias = DB::select('select * from users');
+        return $noticias;
+    }
+    public function obtener_usuario()
+    {
+        $usuario = User::all();
+        return response()->json($usuario, 200);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        /*$v = $this->validate(request(), [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'telefono' => ['required', 'string', 'max:10','min:9'],
+            'identificacion' => ['required', 'string', 'max:13','min:10'],
+            'direccion' => ['required', 'string', 'max:255'],
+            'password' => ['required', 'string', 'min:8'],
+        ]);*/
+       // if ($v) {
+        $usuario = User::where('email', $request->input('email'))->first();
+        if($usuario){
+            return response()->json(['Mensaje'=>'Email Repetido'], 400);
+        }
+        else{
+            $usuario = new User();
+            $usuario->name = $request->input('name');
+            $usuario->email = $request->input('email');
+            $usuario->telefono = $request->input('telefono');
+            $usuario->identificacion = $request->input('identificacion');
+            $usuario->direccion = $request->input('direccion');
+            $usuario->password =Hash::make($request->input('password'));
+            $usuario->save();
+            return response()->json($usuario, 200);
+        }
+
+
+        //}
+           /* else{
+                return response()->json("Error al Guardar Registro", 400);
+            }*/
+
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        $name = ' ';
+        $ruta = ' ';
+        $v = $this->validate(request(), [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'telefono' => ['required', 'string', 'max:10','min:9'],
+            'identificacion' => ['required', 'string', 'max:13','min:10'],
+            'direccion' => ['required', 'string', 'max:255'],
+            'password' => ['required', 'string', 'min:8'],
+        ]);
+        if ($v) {
+
+            $usuario = User::where('id', $id)->first();
+            $usuario = User::find($id)->firstOrFail();
+            $usuario->name = $request->input('name');
+            $usuario->email = $request->input('email');
+            $usuario->telefono = $request->input('telefono');
+            $usuario->identificacion = $request->input('identificacion');
+            $usuario->direccion = $request->input('direccion');
+            $usuario->password = $request->input('password');
+            DB::table('users')
+                ->where('id_noticia', $id)
+                ->update(
+                    ['name' => $usuario->name, 'email' => $usuario->email, 'telefono' => $usuario->telefono, 'identificacion' => $usuario->identificacion, 'direccion' => $usuario->direccion, 'password' => $usuario->password]
+                );
+            return response()->json($usuario, 200);;
+        } else {
+            return response()->json("Error al Actualizar Registro", 400);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        $usuario = User::find($id);
+        $usuario->delete();
+        //
+    }
+
+    public function __construct()
+    {
+        //['index','noticias']
+        $this->middleware('auth:sanctum')->except(['index', 'store']);
+    }
+}

@@ -3,10 +3,26 @@
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
+document.write('<script src="vendor/jquery/jquery.min.js"></script>');
+document.write(
+    '<script src="vendor/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>'
+);
+document.write(
+    '<script src="vendor/adminlte/dist/js/adminlte.min.js"></script>'
+);
+document.write('<script src="vendor/toastr/js/toastr.js"></script>');
 
 require("./bootstrap");
+import JQuery from 'jquery'
+import { filter } from 'lodash';
+let $ = JQuery
+
 
 window.Vue = require("vue").default;
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
+// Make BootstrapVue available throughout your project
+Vue.use(BootstrapVue)
+
 
 /**
  * The following block of code may be used to automatically register your
@@ -29,15 +45,41 @@ Vue.component(
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
-
 const app = new Vue({
     el: "#app",
     created: function() {
         this.getNoticias();
+        this.getCentrosMedicos();
+        this.getDetalleEspecialidades() ;
+        this.getEspecialidades();
+        this.getHoras();
+        this.getHorarios();
+        this.getCitas();
+        this.getMedicos();
+        this.getMedicosProd();
     },
     data: {
+        user: { email: "", password: "" },
+        id_especialidad:0,
+        nombre_centroMedico:"",
+        id_centroMedico:0,
         edit: false,
         noticias: [],
+        centros_medicos: [],
+        especialidades:[],
+        detalle_especialidades:[],
+        auxiliar:[],
+        medicos:[],
+        citas:[],
+        medicos_prod:[],
+        horas:[],
+        horarios:[],
+        edit_centro_medico: false,
+        edit_especialidad: false,
+        edit_detalleCentroMedico:false,
+        edit_hora: false,
+        edit_horario:false,
+        tipo_medico:"Medico Fijo",
         noticia: {
             titulo_noticia: "",
             imagen_noticia: "",
@@ -46,18 +88,73 @@ const app = new Vue({
             fecha_inicio_noticia: "",
             hora_fin_noticia: "",
             fecha_fin_noticia: ""
+        },
+        detalleCentroMedico:{
+            id_detalleCentroMed:0,
+            id_centroMedico:0,
+            id_especialidad:0
+
+        },
+        centro_medico: {
+
+            nombre_centroMedico: "",
+            direccion_centroMedico: "",
+            telef_centroMedico: "",
+            ubic_centroMedico: "",
+            email:"",
+        },
+        especialidad: {
+
+            nombre_especialidad: "",
+
+        },
+        hora: {
+
+            hora: "",
+
+        },
+        horario: {
+            id_horario:0,
+            fecha: "",
+            id_hora: 0,
+            id_medico: 0,
+
+        },
+        medico: {
+            tipo_medico: "",
+            id_detalleCentroMed:0,
+            nombre_medico:""
+        },
+        medico_prod: {
+            nomb_medico:"",
+            id_especialidad:0
         }
     },
 
     methods: {
         getNoticias() {
-            let urlNoticias = "api/noticias";
-            axios.get(urlNoticias).then(response => {
-                this.noticias = response.data;
-            });
+            let urlNoticias = "api/all";
+            let token = localStorage.getItem("token");
+
+            axios
+                .get(urlNoticias, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.noticias = response.data;
+                });
         },
         createNoticia: function() {
             let urlGuardarNoticia = "api/noticias";
+            let image = new Image();
+            let reader = new FileReader();
+            let vm = this;
+            reader.onload = event => {
+                vm.image = event.target.result;
+            };
+            this.noticia.imagen_noticia = vm.image;
             this.noticia.fecha_inicio_noticia =
                 this.noticia.fecha_inicio_noticia +
                 " " +
@@ -66,11 +163,17 @@ const app = new Vue({
                 this.noticia.fecha_fin_noticia +
                 " " +
                 this.noticia.hora_fin_noticia;
+            let token = localStorage.getItem("token");
             axios
-                .post(urlGuardarNoticia, this.noticia)
+
+                .post(urlGuardarNoticia, this.noticia, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
                 .then(response => {
                     this.getNoticias();
-                    noticia = {
+                    this.noticia = {
                         titulo_noticia: "",
                         imagen_noticia: "",
                         descripcion_noticia: "",
@@ -79,7 +182,13 @@ const app = new Vue({
                     };
                     this.errors = [];
                     $("#modal-noticia").modal("hide");
+                    if ($(".modal-backdrop").is(":visible")) {
+                        $("body").removeClass("modal-open");
+                        $(".modal-backdrop").remove();
+                    }
+
                     toastr.success("Se añadido una nueva Noticia");
+                    window.locationf = "http://apiredsaludmachala.net/noticias";
                 })
                 .catch(error => {
                     this.errors = error.response.data;
@@ -107,16 +216,29 @@ const app = new Vue({
         },
         updateNoticia: function() {
             let url = "api/updatenoticia/" + this.noticia.id_noticia;
+            let image = new Image();
+            let reader = new FileReader();
+            let vm = this;
+            let token = localStorage.getItem("token");
+
+            reader.onload = event => {
+                vm.image = event.target.result;
+            };
+            this.noticia.imagen_noticia = vm.image;
             this.noticia.fecha_inicio_noticia =
                 this.noticia.fecha_inicio_noticia +
-                "T" +
+                " " +
                 this.noticia.hora_inicio_noticia;
             this.noticia.fecha_fin_noticia =
                 this.noticia.fecha_fin_noticia +
                 " " +
                 this.noticia.hora_fin_noticia;
             axios
-                .post(url, this.noticia)
+                .post(url, this.noticia, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
                 .then(response => {
                     this.getNoticias();
                     this.noticia = {
@@ -138,10 +260,826 @@ const app = new Vue({
         },
         deleteNoticia: function(id_noticia) {
             let url = "api/noticias/" + id_noticia;
-            axios.delete(url).then(response => {
-                this.getNoticias();
-                toastr.success("Noticia eliminada con éxito");
-            });
+            let token = localStorage.getItem("token");
+
+            axios
+                .delete(url, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.getNoticias();
+                    toastr.success("Noticia eliminada con éxito");
+                });
+        },
+        createImage(file) {
+            let image = new Image();
+            let reader = new FileReader();
+            let vm = this;
+            reader.onload = event => {
+                vm.image = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        },
+        removeImage: function(event) {
+            this.image = "";
+        },
+        getImagenNoticia(event) {
+            //Asignamos la imagen a  nuestra data
+            let files = event.target.files || event.dataTransfer.files;
+            if (!files.length) return;
+            this.createImage(files[0]);
+        },
+
+        //Metodos de Centros Medicos
+        //*********************************************** */
+        //**************************************************** */
+        getCentrosMedicos() {
+            let urlCentrosMedicos = "api/obtener_centros_medicos";
+            let token = localStorage.getItem("token");
+
+            axios
+                .get(urlCentrosMedicos, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.centros_medicos = response.data;
+                });
+        },
+        createCentroMedico: function() {
+            let urlGuardarCentroMedico = "api/centros_medicos";
+            let token = localStorage.getItem("token");
+            axios
+
+                .post(urlGuardarCentroMedico, this.centro_medico, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.detalleCentroMedico.id_centroMedico=response.data.id_centroMedico;
+                    this.nombre_centroMedico=response.data.nombre_centroMedico;
+                    this.obtener_detalleIdCentMed();
+                    this.getCentrosMedicos();
+                    this.centro_medico = {
+                        nombre_centroMedico: "",
+                        direccion_centroMedico: "",
+                        telef_centroMedico: "",
+                        ubic_centroMedico: "",
+                        email:""
+                    };
+                    this.errors = [];
+                    $("#modal-centrosmedicos").modal("hide");
+                    if ($(".modal-backdrop").is(":visible")) {
+                        $("body").removeClass("modal-open");
+                        $(".modal-backdrop").remove();
+                    }
+
+                    toastr.success("Se añadido un nuevo Centro Medico");
+                    window.locationf = "http://apiredsaludmachala.net/centrosmedicos";
+                    $("#modal-asignarEspecialidad").modal("show");
+
+                })
+                .catch(error => {
+                    this.errors = error.response.data;
+                });
+        },
+        createDetalleCentromedico:function(){
+            let urlGuardarCentroMedico = "api/detalle_centro_medico";
+            let token = localStorage.getItem("token");
+            if(!this.edit_detalleCentroMedico){
+                let aux;
+                aux = this.auxiliar.map(function(e) { return e.id_especialidad; }).indexOf( this.detalleCentroMedico.id_especialidad);
+                console.log(aux);
+                if(aux==-1){
+                      axios
+
+                .post(urlGuardarCentroMedico, this.detalleCentroMedico, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.getCentrosMedicos();
+                    this.getDetalleEspecialidades();
+                    this.obtener_detalleIdCentMed();
+                    this.detalleCentroMedico.id_especialidad=0;
+                    this.errors = [];
+                    toastr.success("Se ha asignado una nueva Especialidad a Centro Medico");
+                })
+                .catch(error => {
+                    this.errors = error.response.data;
+                });
+
+                }
+                else{
+                    toastr.error("La especialidad ya existe en el Centro Medico... Asigne Otra");
+                }
+
+            }
+            else{
+                this.updateDetalleCentroMedico();
+
+            }
+
+
+        },
+        updateDetalleCentroMedico: function(){
+            let url = "api/update_detalle_centro_medicos/" + this.detalleCentroMedico.id_detalleCentroMed;
+
+            let token = localStorage.getItem("token");
+            axios
+                .post(url, this.detalleCentroMedico, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.getDetalleEspecialidades();
+                    this.obtener_detalleIdCentMed();
+                    this.edit_detalleCentroMedico=false;
+                    this.detalleCentroMedico.id_especialidad=0;
+                    toastr.success("Especialidad actualizada con éxito");
+                })
+                .catch(error => {
+                    this.errors = error.response.data;
+                });
+
+        },
+        editCentroMedico: function(centroMedico) {
+            this.edit_centro_medico = true;
+            this.centro_medico.id_centroMedico = centroMedico.id_centroMedico;
+            this.centro_medico.nombre_centroMedico = centroMedico.nombre_centroMedico;
+            this.centro_medico.direccion_centroMedico = centroMedico.direccion_centroMedico;
+            this.centro_medico.telef_centroMedico = centroMedico.telef_centroMedico;
+            this.centro_medico.ubic_centroMedico = centroMedico.ubic_centroMedico;
+            this.centro_medico.email = centroMedico.email;
+
+
+            $("#modal-centromedicoed").modal("show");
+        },
+        updateCentroMedico: function() {
+            let url = "api/updatecentrosmedicos/" + this.centro_medico.id_centroMedico;
+
+            let token = localStorage.getItem("token");
+            axios
+                .post(url, this.centro_medico, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.detalleCentroMedico.id_centroMedico=this.centro_medico.id_centroMedico;
+                    this.nombre_centroMedico=this.centro_medico.nombre_centroMedico;
+                    this.obtener_detalleIdCentMed();
+                    this.getCentrosMedicos();
+                    this.centro_medico = {
+                        nombre_centroMedico: "",
+                        direccion_centroMedico: "",
+                        telef_centroMedico: "",
+                        ubic_centroMedico: "",
+                        email:""
+                    };
+                    $("#modal-centromedicoed").modal("hide");
+                    $("#modal-editAsigcentromedico").modal("show");
+                    toastr.success("Centro Medico actualizado con éxito");
+                })
+                .catch(error => {
+                    this.errors = error.response.data;
+                });
+        },
+        deleteCentroMedico: function(id_centroMedico) {
+            let url = "api/centros_medicos/" + id_centroMedico;
+            let token = localStorage.getItem("token");
+
+            axios
+                .delete(url, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.getCentrosMedicos();
+                    toastr.success("Centro Medico eliminado con éxito");
+                });
+        },
+        //fin de metodos de centros medicos
+
+ //Metodos de Especialidades
+        //*********************************************** */
+        //**************************************************** */
+        getDetalleEspecialidades() {
+            let urlDetalleCentroMedico = "api/obtener_detalle_centro_medicos";
+            let token = localStorage.getItem("token");
+
+            axios
+                .get(urlDetalleCentroMedico, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.detalle_especialidades = response.data;
+                });
+        },
+        getEspecialidades() {
+            let urlEspecialidades = "api/obtener_especialidades";
+            let token = localStorage.getItem("token");
+
+            axios
+                .get(urlEspecialidades, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.especialidades = response.data;
+                });
+        },
+        createEspecialidad: function() {
+            let urlGuardarEspecialidad = "api/especialidades";
+            let token = localStorage.getItem("token");
+            axios
+
+                .post(urlGuardarEspecialidad, this.especialidad, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.getEspecialidades();
+                    this.especialidad = {
+                        nombre_especialidad: "",
+                    };
+                    this.errors = [];
+                    $("#modal-especialidades").modal("hide");
+                    if ($(".modal-backdrop").is(":visible")) {
+                        $("body").removeClass("modal-open");
+                        $(".modal-backdrop").remove();
+                    }
+
+                    toastr.success("Se ha añadido una Nueva Especialidad");
+                    window.locationf = "http://apiredsaludmachala.net/especialidades";
+                })
+                .catch(error => {
+                    this.errors = error.response.data;
+                });
+        },
+        editEspecialidad: function(especialidad) {
+            this.edit_especialidad = true;
+            this.especialidad.id_especialidad = especialidad.id_especialidad;
+            this.especialidad.nombre_especialidad = especialidad.nombre_especialidad;
+
+            $("#modal-especialidaded").modal("show");
+        },
+        updateEspecialidad: function() {
+            let url = "api/updateespecialidades/" + this.especialidad.id_especialidad;
+
+            let token = localStorage.getItem("token");
+            axios
+                .post(url, this.especialidad, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.getEspecialidades();
+                    this.especialidad = {
+                        nombre_especialidad: "",
+                    };
+                    $("#modal-especialidaded").modal("hide");
+                    toastr.success("Especialidad actualizada con éxito");
+                })
+                .catch(error => {
+                    this.errors = error.response.data;
+                });
+        },
+        deleteEspecialidad: function(id_especialidad) {
+            let url = "api/especialidades/" + id_especialidad;
+            let token = localStorage.getItem("token");
+
+            axios
+                .delete(url, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.getEspecialidades();
+                    toastr.success("Especialidad eliminada con éxito");
+                });
+        },
+        obtener_especialidades(event){
+            let id_centroMedico=event.target.value;
+           this.auxiliar = this.detalle_especialidades.filter(centroMedico => centroMedico.id_centroMedico==id_centroMedico);
+
+        },
+        obtener_detalleIdCentMed(){
+            let id_centroMedico= this.detalleCentroMedico.id_centroMedico;
+            /*console.log(id_centroMedico);
+           this.auxiliar = this.detalle_especialidades.filter(centroMedico => centroMedico.id_centroMedico==id_centroMedico);
+
+           console.log(this.auxiliar);*/
+           let urlDetalleCentroMedico = "api/obtener_detalle_centro_medicos";
+            let token = localStorage.getItem("token");
+
+            axios
+                .get(urlDetalleCentroMedico, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.auxiliar = response.data.filter(centroMedico => centroMedico.id_centroMedico==id_centroMedico);
+                });
+
+        },
+        editAsigEspec: function(detalleCentroMedico){
+            this.edit_detalleCentroMedico = true;
+            this.detalleCentroMedico.id_especialidad = detalleCentroMedico.id_especialidad;
+            this.detalleCentroMedico.id_detalleCentroMed = detalleCentroMedico.id_detalleCentroMed;
+        },
+        deleteAsigEspec: function(id_detalleCentroMed) {
+            let url = "api/detalle_centro_medico/" + id_detalleCentroMed;
+            let token = localStorage.getItem("token");
+
+            axios
+                .delete(url, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.getDetalleEspecialidades();
+                    this.obtener_detalleIdCentMed();
+                    toastr.success("Especialidad eliminada con éxito");
+                });
+
+        },
+                //fin de metodos de especialidades
+
+
+         //Metodos de Medicos
+        //*********************************************** */
+        //**************************************************** */
+        getMedicos() {
+            let urlMedicos = "api/obtener_medicos";
+            let token = localStorage.getItem("token");
+
+            axios
+                .get(urlMedicos, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.medicos = response.data;
+                });
+        },
+        createMedicos: function() {
+            let urlGuardarMedicos = "api/medicos";
+            let token = localStorage.getItem("token");
+            if(this.tipo_medico=='Medico Fijo'){
+                axios
+
+                .post(urlGuardarMedicos, this.medico, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.getMedicos();
+                    this.medico = {
+                        tipo_medico: "",
+                        id_detalleCentroMed:0,
+                        nombre_medico:""
+                    };
+                    this.errors = [];
+                    $("#modal-medicos").modal("hide");
+                    if ($(".modal-backdrop").is(":visible")) {
+                        $("body").removeClass("modal-open");
+                        $(".modal-backdrop").remove();
+                    }
+
+                    toastr.success("Se añadido un Nuevo Medico");
+                    window.locationf = "http://apiredsaludmachala.net/medicos";
+                })
+                .catch(error => {
+                    this.errors = error.response.data;
+                });
+
+            }
+            else{
+                this.createMedicosProd();
+            }
+
+        },
+        editMedico: function(medico) {
+            this.edit_medico = true;
+            this.tipo_medico="Medico Fijo";
+            this.medico.id_medico = medico.id_medico;
+            this.medico.tipo_medico = medico.tipo_medico;
+            this.medico.id_detalleCentroMed = medico.id_detalleCentroMed;
+            this.medico.nombre_medico = medico.nombre_medico;
+
+            $("#modal-medicoed").modal("show");
+        },
+        updateMedico: function() {
+            let url = "api/updatemedicos/" + this.medico.id_medico;
+
+            let token = localStorage.getItem("token");
+            if(this.tipo_medico=='Medico Fijo'){
+                axios
+                .post(url, this.medico, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.getMedicos();
+                    this.medico = {
+                        tipo_medico: "",
+                        id_detalleCentroMed:0,
+                        nombre_medico:""
+                    };
+                    $("#modal-medicoed").modal("hide");
+                    toastr.success("Medico actualizado con éxito");
+                })
+                .catch(error => {
+                    this.errors = error.response.data;
+                });
+
+            }else{
+                this.updateMedicoProd();
+            }
+
+        },
+        deleteMedico: function(id_medico) {
+            let url = "api/medicos/" + id_medico;
+            let token = localStorage.getItem("token");
+
+            axios
+                .delete(url, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.getMedicos();
+                    toastr.success("Medico eliminado con éxito");
+                });
+        },
+        obtener_tipo_medico(event){
+            this.tipo_medico=event.target.value;
+        },
+        //fin de metodos de Medico
+
+ //Metodos de Medicos de Produccion
+        //*********************************************** */
+        //**************************************************** */
+        getMedicosProd() {
+            let urlMedicosProd = "api/obtener_medicos_prod";
+            let token = localStorage.getItem("token");
+
+            axios
+                .get(urlMedicosProd, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.medicos_prod = response.data;
+                });
+        },
+        createMedicosProd: function() {
+            let urlGuardarMedicosProd = "api/medicos_produccion";
+            this.medico_prod.nomb_medico=this.medico.nombre_medico;
+            let token = localStorage.getItem("token");
+            axios
+
+                .post(urlGuardarMedicosProd, this.medico_prod, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.getMedicosProd();
+                    this.medico_prod = {
+                        nomb_medico:"",
+                        id_especialidad:0
+                    };
+                    this.errors = [];
+                    $("#modal-medicos").modal("hide");
+                    if ($(".modal-backdrop").is(":visible")) {
+                        $("body").removeClass("modal-open");
+                        $(".modal-backdrop").remove();
+                    }
+
+                    toastr.success("Se añadido un Nuevo Medico de Produccion");
+                    window.locationf = "http://apiredsaludmachala.net/medicos";
+                })
+                .catch(error => {
+                    this.errors = error.response.data;
+                });
+        },
+        editMedicoProd: function(medicoProd) {
+            this.edit_medico = true;
+            this.tipo_medico="";
+            this.medico_prod.id_medico_prod = medicoProd.id_medico_prod;
+            this.medico.nombre_medico = medicoProd.nombre_medico;
+            this.medico_prod.id_especialidad = medicoProd.id_especialidad;
+            this.medico_prod.nomb_medico = medicoProd.nombre_medico;
+
+            $("#modal-medicoed").modal("show");
+        },
+        updateMedicoProd: function() {
+            let url = "api/updatemedicos_prod/" + this.medico_prod.id_medico_prod;
+            this.medico_prod.nomb_medico=this.medico.nombre_medico;
+            let token = localStorage.getItem("token");
+            axios
+                .post(url, this.medico_prod, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.getMedicosProd();
+                    this.medico = {
+                        nomb_medico:"",
+                        id_especialidad:0
+                    };
+                    $("#modal-medicoed").modal("hide");
+                    toastr.success("Medico de Produccion actualizado con éxito");
+                })
+                .catch(error => {
+                    this.errors = error.response.data;
+                });
+        },
+        deleteMedicoProd: function(id_medico_prod) {
+            let url = "api/medicos_produccion/" + id_medico_prod;
+            let token = localStorage.getItem("token");
+
+            axios
+                .delete(url, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.getMedicosProd();
+                    toastr.success("Medico de Produccion eliminado con éxito");
+                });
+        },
+        //fin de metodos de Medico de Produccion
+
+         //Metodos de Horas
+        //*********************************************** */
+        //**************************************************** */
+        getHoras() {
+            let urlHoras = "api/obtener_horas";
+            let token = localStorage.getItem("token");
+
+            axios
+                .get(urlHoras, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.horas = response.data;
+                });
+        },
+        createHora: function() {
+            let urlGuardarHora = "api/horas";
+            let token = localStorage.getItem("token");
+            axios
+
+                .post(urlGuardarHora, this.hora, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.getHoras();
+                    this.hora = {
+                        hora: "",
+                    };
+                    this.errors = [];
+                    $("#modal-horas").modal("hide");
+                    if ($(".modal-backdrop").is(":visible")) {
+                        $("body").removeClass("modal-open");
+                        $(".modal-backdrop").remove();
+                    }
+
+                    toastr.success("Se añadido una Hora");
+                    window.locationf = "http://apiredsaludmachala.net/horas";
+                })
+                .catch(error => {
+                    this.errors = error.response.data;
+                });
+        },
+        editHora: function(hora) {
+            this.edit_hora = true;
+            this.hora.id_hora = hora.id_hora;
+            this.hora.hora = hora.hora;
+
+            $("#modal-horaed").modal("show");
+        },
+        updateHora: function() {
+            let url = "api/updatehoras/" + this.hora.id_hora;
+
+            let token = localStorage.getItem("token");
+            axios
+                .post(url, this.hora, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.getHoras();
+                    this.hora = {
+                        hora: "",
+                    };
+                    $("#modal-horaed").modal("hide");
+                    toastr.success("Hora actualizada con éxito");
+                })
+                .catch(error => {
+                    this.errors = error.response.data;
+                });
+        },
+        deleteHora: function(id_hora) {
+            let url = "api/horas/" + id_hora;
+            let token = localStorage.getItem("token");
+
+            axios
+                .delete(url, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.getHoras();
+                    toastr.success("Hora eliminada con éxito");
+                });
+        },
+        //fin de metodos de Horas
+         //Metodos de Horas
+        //*********************************************** */
+        //**************************************************** */
+        getCitas() {
+            let urlCitas = "api/obtener_citas";
+            let token = localStorage.getItem("token");
+
+            axios
+                .get(urlCitas, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.citas = response.data;
+                });
+        },
+        //Fin Metodo de Citas
+ //Metodos de Horarios
+        //*********************************************** */
+        //**************************************************** */
+        getHorarios() {
+            let urlHorarios = "api/obtener_horario";
+            let token = localStorage.getItem("token");
+
+            axios
+                .get(urlHorarios, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.horarios = response.data;
+                });
+        },
+        createHorario: function() {
+            let urlGuardarHorario = "api/horarios";
+            let token = localStorage.getItem("token");
+            axios
+
+                .post(urlGuardarHorario, this.horario, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.getHorarios();
+                    this.horario = {
+                        fecha: "",
+                        id_hora: 0,
+                        id_medico: 0,
+                    };
+                    this.errors = [];
+                    $("#modal-horarios").modal("hide");
+                    if ($(".modal-backdrop").is(":visible")) {
+                        $("body").removeClass("modal-open");
+                        $(".modal-backdrop").remove();
+                    }
+
+                    toastr.success("Se ha añadido un Horario");
+                    window.locationf = "http://apiredsaludmachala.net/horarios";
+                })
+                .catch(error => {
+                    this.errors = error.response.data;
+                });
+        },
+        editHorario: function(horario) {
+            this.edit_horario = true;
+            this.horario.id_horario = horario.id_horario;
+            this.horario.fecha = horario.fecha;
+            this.horario.id_hora = horario.id_hora;
+            this.horario.id_medico = horario.id_medico;
+
+            $("#modal-horarioed").modal("show");
+        },
+        updateHorario: function() {
+            let url = "api/updatehorario/" + this.horario.id_horario;
+
+            let token = localStorage.getItem("token");
+            axios
+                .post(url, this.horario, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.getHorarios();
+                    this.horario = {
+                        fecha: "",
+                        id_hora: 0,
+                        id_medico: 0,
+                    };
+                    $("#modal-horarioed").modal("hide");
+                    toastr.success("Horario actualizado con éxito");
+                })
+                .catch(error => {
+                    this.errors = error.response.data;
+                });
+        },
+        deleteHorario: function(id_horario) {
+            let url = "api/horarios/" + id_horario;
+            let token = localStorage.getItem("token");
+
+            axios
+                .delete(url, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.getHorarios();
+                    toastr.success("Horario eliminado con éxito");
+                });
+        },
+        //fin de metodos de Horario
+        logout() {
+            axios
+                .post("/logout")
+                .then(response => {
+                    //this.$router.Push("/login")
+                    window.location.replace("/login");
+                })
+                .catch(error => {
+                    location.reload();
+                });
+        },
+        autenticacion() {
+            axios
+                .post("/login", this.user)
+                .then(response => {
+                    window.location.href = "http://apiredsaludmachala.net/home";
+                })
+                .catch(response => {
+                    // List errors on response...
+                });
+        },
+        login: function() {
+            let urlGuardarlogin = "api/logueo";
+
+            axios
+                .post(urlGuardarlogin, this.user)
+
+                .then(response => {
+                    this.autenticacion();
+                    this.user = {
+                        email: "",
+                        password: ""
+                    };
+                    localStorage.setItem("token", response.data.access_token);
+                    this.errors = [];
+                })
+                .catch(error => {
+                    this.errors = error.response.data;
+                });
         }
     }
 });

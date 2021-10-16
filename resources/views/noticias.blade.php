@@ -18,16 +18,3 @@
 @livewire('noticia-component')
 @stop
 
-
-@section('js')
-<script src="{{ asset('vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js') }}"></script>
-<script>
-$('#datetimepickeri').datetimepicker({
-    format: 'yyyy-mm-dd hh:ii'
-});
-$('#datetimepickerf').datetimepicker({
-    format: 'yyyy-mm-dd hh:ii'
-});
-
-</script>
-@stop

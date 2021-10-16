@@ -1,8 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Noticias;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 
 
 class NoticiasController extends Controller
@@ -14,8 +17,14 @@ class NoticiasController extends Controller
      */
     public function index()
     {
+        $noticias = DB::select('select * from v_control_fecha');
+        return $noticias;
+
+    }
+    public function all()
+    {
         $noticia = Noticias::all();
-        return response()->json($noticia ,200);
+        return response()->json($noticia, 200);
     }
 
     /**
@@ -36,27 +45,35 @@ class NoticiasController extends Controller
      */
     public function store(Request $request)
     {
-        $v =$this->validate(request(), [
+        $v = $this->validate(request(), [
             'titulo_noticia' => 'required|string',
             'imagen_noticia' => 'required|string',
             'descripcion_noticia' => 'required|string',
             'fecha_inicio_noticia' => 'required',
             'fecha_fin_noticia' => 'required'
         ]);
-        if ($v)
-        {
-          $noticia= new Noticias();
-          $noticia->titulo_noticia=$request->input('titulo_noticia');
-          $noticia->imagen_noticia=$request->input('imagen_noticia');
-          $noticia->descripcion_noticia=$request->input('descripcion_noticia');
-          $noticia->fecha_inicio_noticia=$request->input('fecha_inicio_noticia');
-          $noticia->fecha_fin_noticia=$request->input('fecha_fin_noticia');
-          $noticia->save();
-          return redirect('noticias');
-        }
-        else
-        {
-          return back()->withInput($request->all());
+        if ($v) {
+            list($type, $imageData) = explode(';', $request->imagen_noticia);
+            list(, $extension) = explode('/', $type);
+            list(, $imageData) = explode(',', $imageData);
+            $name = $request->titulo_noticia . '.' . $extension;
+            $source = fopen($request->imagen_noticia, 'r');
+            $destination = fopen(public_path() . '/img/noticia/' . $name, 'w');
+            stream_copy_to_stream($source, $destination);
+
+            fclose($source);
+            fclose($destination);
+            $ruta = '/img/noticia/';
+            $noticia = new Noticias();
+            $noticia->titulo_noticia = $request->input('titulo_noticia');
+            $noticia->imagen_noticia = $ruta . $name;
+            $noticia->descripcion_noticia = $request->input('descripcion_noticia');
+            $noticia->fecha_inicio_noticia = $request->input('fecha_inicio_noticia');
+            $noticia->fecha_fin_noticia = $request->input('fecha_fin_noticia');
+            $noticia->save();
+            return redirect('noticias');
+        } else {
+            return back()->withInput($request->all());
         }
     }
 
@@ -79,7 +96,6 @@ class NoticiasController extends Controller
      */
     public function edit($id)
     {
-
     }
 
     /**
@@ -91,28 +107,48 @@ class NoticiasController extends Controller
      */
     public function update(Request $request, $id)
     {
-
-        $v =$this->validate(request(), [
+        $name = ' ';
+        $ruta = ' ';
+        $v = $this->validate(request(), [
             'titulo_noticia' => 'required|string',
-            'imagen_noticia' => 'required|string',
+
             'descripcion_noticia' => 'required|string',
             'fecha_inicio_noticia' => 'required',
             'fecha_fin_noticia' => 'required'
         ]);
-        if ($v)
-        {
-          $noticia = Noticias::find($id)->firstOrFail();
-          $noticia->titulo_noticia=$request->input('titulo_noticia');
-          $noticia->imagen_noticia=$request->input('imagen_noticia');
-          $noticia->descripcion_noticia=$request->input('descripcion_noticia');
-          $noticia->fecha_inicio_noticia=$request->input('fecha_inicio_noticia');
-          $noticia->fecha_fin_noticia=$request->input('fecha_fin_noticia');
-          $noticia->save();
-          return redirect('noticias');
-        }
-        else
-        {
-          return back()->withInput($request->all());
+        if ($v) {
+            if (!empty($request->imagen_noticia)) {
+                list($type, $imageData) = explode(';', $request->imagen_noticia);
+                list(, $extension) = explode('/', $type);
+                list(, $imageData) = explode(',', $imageData);
+                $name = $request->titulo_noticia . '.' . $extension;
+                $source = fopen($request->imagen_noticia, 'r');
+                $destination = fopen(public_path() . '/img/noticia/' . $name, 'w');
+                stream_copy_to_stream($source, $destination);
+
+                fclose($source);
+                fclose($destination);
+                $ruta = '/img/noticia/';
+            } else {
+                $noticia = Noticias::where('id_noticia', $id)->first();
+
+                $name=$noticia->imagen_noticia;
+            }
+
+            $noticia = Noticias::find($id)->firstOrFail();
+            $noticia->titulo_noticia = $request->input('titulo_noticia');
+            $noticia->imagen_noticia = $ruta . $name;
+            $noticia->descripcion_noticia = $request->input('descripcion_noticia');
+            $noticia->fecha_inicio_noticia = $request->input('fecha_inicio_noticia');
+            $noticia->fecha_fin_noticia = $request->input('fecha_fin_noticia');
+            DB::table('noticias')
+                ->where('id_noticia', $id)
+                ->update(
+                    ['titulo_noticia' => $noticia->titulo_noticia, 'imagen_noticia' => $noticia->imagen_noticia, 'descripcion_noticia' => $noticia->descripcion_noticia, 'fecha_inicio_noticia' => $noticia->fecha_inicio_noticia, 'fecha_fin_noticia' => $noticia->fecha_fin_noticia]
+                );
+            return redirect('noticias');
+        } else {
+            return back()->withInput($request->all());
         }
     }
 
@@ -128,8 +164,14 @@ class NoticiasController extends Controller
         $noticia->delete();
         //
     }
-    public function noticias(){
+    public function noticias()
+    {
         return view('noticias');
     }
-}
+    public function __construct()
+    {
+        //['index','noticias']
+        $this->middleware('auth:sanctum')->except(['index','noticias']);
+    }
 
+}
