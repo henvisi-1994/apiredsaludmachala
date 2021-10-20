@@ -88,7 +88,9 @@ class CitasController extends Controller
                 $msj->to($email,$nomb_usuario);
                 $msj->subject('Agenda de Cita Medica');
             });
-            return ;
+            return response()->json([
+                'mensaje' => "Cita Confirmada"
+            ]);
         //} else {
        //     return back()->withInput($request->all());
        // }

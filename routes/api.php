@@ -61,3 +61,6 @@ Route::post('/update_usuario/{id}', [App\Http\Controllers\UsuarioController::cla
 //Rutas de Citas
 Route::resource('citas','CitasController');
 Route::get('/obtener_citas', [App\Http\Controllers\CitasController::class, 'obtener_citas']);
+//Ruta de Gestion de Pago
+Route::get('/obetener_token_pago', [App\Http\Controllers\GestionPagoController::class, 'index']);
+

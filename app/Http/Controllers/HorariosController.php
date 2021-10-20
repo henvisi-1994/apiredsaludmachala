@@ -17,7 +17,7 @@ class HorariosController extends Controller
      */
     public function index()
     {
-        $horarios= DB::select('select * from v_horarios');
+        $horarios = DB::select('SELECT *from v_horarios where estado = :estado', ['estado' => 'true']);
         return $horarios;
 
     }
@@ -56,6 +56,7 @@ class HorariosController extends Controller
             $horario->fecha = $request->input('fecha');
             $horario->id_hora = $request->input('id_hora');
             $horario->id_medico = $request->input('id_medico');
+            $horario->estado = 'true';
             $horario->save();
             return redirect('horarios');
         } else {
@@ -124,12 +125,17 @@ class HorariosController extends Controller
      */
     public function destroy($id)
     {
-        $horarios = Horarios::find($id);
-        $horarios->delete();
-        //
-        return response()->json([
-            'mensaje' => "Horario Confirmado"
-        ]);
+            $horario = Horarios::find($id)->firstOrFail();
+            $horario->estado = 'false';
+            DB::table('horarios')
+                ->where('id_horario', $id)
+                ->update(
+                    ['estado' => $horario->estado]
+                );
+                return response()->json([
+                    'mensaje' => "Horario Eliminada"
+                ]);
+
     }
     public function horarios()
     {

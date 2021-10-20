@@ -13,5 +13,6 @@ class Horarios extends Model
         'fecha',
         'id_hora',
         'id_medico',
+        'estado'
     ];
 }
