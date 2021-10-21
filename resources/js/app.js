@@ -106,6 +106,8 @@ const app = new Vue({
         especialidad: {
 
             nombre_especialidad: "",
+            valor: 0,
+
 
         },
         hora: {
@@ -513,6 +515,8 @@ const app = new Vue({
                     this.getEspecialidades();
                     this.especialidad = {
                         nombre_especialidad: "",
+                        valor: 0,
+
                     };
                     this.errors = [];
                     $("#modal-especialidades").modal("hide");
@@ -532,6 +536,7 @@ const app = new Vue({
             this.edit_especialidad = true;
             this.especialidad.id_especialidad = especialidad.id_especialidad;
             this.especialidad.nombre_especialidad = especialidad.nombre_especialidad;
+            this.especialidad.valor = especialidad.valor;
 
             $("#modal-especialidaded").modal("show");
         },
@@ -549,6 +554,8 @@ const app = new Vue({
                     this.getEspecialidades();
                     this.especialidad = {
                         nombre_especialidad: "",
+                        valor: 0,
+
                     };
                     $("#modal-especialidaded").modal("hide");
                     toastr.success("Especialidad actualizada con éxito");

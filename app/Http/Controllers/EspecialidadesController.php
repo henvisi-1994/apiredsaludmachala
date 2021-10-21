@@ -47,11 +47,14 @@ class EspecialidadesController extends Controller
     {
         $v = $this->validate(request(), [
             'nombre_especialidad' => 'required|string',
+            'valor' => 'required',
+
         ]);
         if ($v) {
 
             $especialidad = new Especialidades();
             $especialidad->nombre_especialidad = $request->input('nombre_especialidad');
+            $especialidad->valor = $request->input('valor');
             $especialidad->save();
             return redirect('especialidades');
         } else {
@@ -93,14 +96,16 @@ class EspecialidadesController extends Controller
         $ruta = ' ';
         $v = $this->validate(request(), [
             'nombre_especialidad' => 'required|string',
+            'valor' => 'required'
         ]);
         if ($v) {
             $especialidad = Especialidades::find($id)->firstOrFail();
             $especialidad->nombre_especialidad = $request->input('nombre_especialidad');
+            $especialidad->valor = $request->input('valor');
             DB::table('especialidades')
                 ->where('id_especialidad', $id)
                 ->update(
-                    ['nombre_especialidad' => $especialidad->nombre_especialidad]
+                    ['nombre_especialidad' => $especialidad->nombre_especialidad,'valor' => $especialidad->valor]
                 );
             return redirect('especialidades');
         } else {

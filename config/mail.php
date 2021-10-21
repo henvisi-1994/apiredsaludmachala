@@ -37,7 +37,7 @@ return [
         'smtp' => [
             'transport' => 'smtp',
             'host' => env('MAIL_HOST', 'mail.saludmachala.gob.ec'),
-            'port' => env('MAIL_PORT', 465),
+            'port' => env('MAIL_PORT', 26),
             'encryption' => env('MAIL_ENCRYPTION', 'tls'),
             'username' => env('MAIL_USERNAME'),
             'password' => env('MAIL_PASSWORD'),
