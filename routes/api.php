@@ -63,4 +63,7 @@ Route::resource('citas','CitasController');
 Route::get('/obtener_citas', [App\Http\Controllers\CitasController::class, 'obtener_citas']);
 //Ruta de Gestion de Pago
 Route::get('/obetener_token_pago', [App\Http\Controllers\GestionPagoController::class, 'index']);
+Route::get('/obtener_tarjeta/{identificacion}', [App\Http\Controllers\GestionPagoController::class, 'obtener_tarjeta']);
+//Rutas de EmailCitas
+Route::post('/email_cita', [App\Http\Controllers\CitasController::class, 'email_cita'])->name('email_cita');
 
