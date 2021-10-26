@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DetalleCentrosMedicos;
 use App\Models\Especialidades;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -121,8 +122,17 @@ class EspecialidadesController extends Controller
      */
     public function destroy($id)
     {
+        $detalle_especialidad = DB::select('SELECT *from detalle_centros_medicos where id_especialidad = :id', ['id' => $id]);
+        $medico_produccion = DB::select('SELECT *from medico_produccions where id_especialidad = :id', ['id' => $id]);
+        $size_especialidad=count($detalle_especialidad);
+        $size_medico_prod=count($medico_produccion);
+        if($size_especialidad==0&&$size_medico_prod==0){
         $especialidad = Especialidades::find($id);
         $especialidad->delete();
+        }
+        else{
+            return response()->json("Especialidad Existente, No puede Eliminar");
+        }
         //
     }
     public function especialidades()
