@@ -20,9 +20,8 @@ class CitasController extends Controller
      */
     public function index()
     {
-        $citas= DB::select('select * from v_citas');
+        $citas = DB::select('select * from v_citas');
         return $citas;
-
     }
     public function obtener_citas()
     {
@@ -56,48 +55,76 @@ class CitasController extends Controller
         ]);
         //if ($v) {
 
-            $cita = new Citas();
-            $cita->id_especialidad = $request->input('id_especialidad');
-            $cita->id_horario = $request->input('id_horario');
-            $cita->id_medico = $request->input('id_medico');
-            $cita->nomb_usuario = $request->input('nomb_usuario');
-            $cita->save();
-            return $cita;
-            /*return response()->json([
+        $cita = new Citas();
+        $cita->id_especialidad = $request->input('id_especialidad');
+        $cita->id_horario = $request->input('id_horario');
+        $cita->id_medico = $request->input('id_medico');
+        $cita->nomb_usuario = $request->input('nomb_usuario');
+        $cita->save();
+        return $cita;
+        /*return response()->json([
                 'mensaje' => "Cita Confirmada"
             ]);*/
         //} else {
-       //     return back()->withInput($request->all());
-       // }
+        //     return back()->withInput($request->all());
+        // }
     }
-    public function email_cita(Request $request){
+    public function email_cita(Request $request)
+    {
         $email = DB::select('select email from citas inner join medicos on citas.id_medico=medicos.id_medico inner join detalle_centros_medicos on
             medicos."id_detalleCentroMed"=detalle_centros_medicos."id_detalleCentroMed" inner join centros_medicos on
             detalle_centros_medicos."id_centroMedico"=centros_medicos."id_centroMedico" where citas.id_medico = :id', ['id' => $request->input('id_medico')])[0]->email;
-            $especialidad = $request->input('nombre_especialidad');
-            $nomb_centro_medico = $request->input('nombre_centroMedico');
-            $nomb_medico = $request->input('nombre_medico');
-            $fecha = DB::select('SELECT fecha FROM v_citas where id_medico = :id', ['id' => $request->input('id_medico')])[0]->fecha;
-            $date = Carbon::parse($fecha);
-            $date = $date->format('d/m/Y');
-            $hora = DB::select('SELECT hora FROM v_citas where id_medico = :id', ['id' => $request->input('id_medico')])[0]->hora;
-            $formato_hora = explode("-", $hora);
-            $nomb_usuario = $request->input('nomb_usuario');
-            $credenciales =[
-                'email' => $email,
-                'username' =>  $nomb_usuario,
-                'especialidad'=>$especialidad,
-                'nomb_centro_medico'=>$nomb_centro_medico,
-                'nomb_medico'=>$nomb_medico,
-                'fecha'=>$date,
-                'hora'=>$formato_hora[0]
-            ];
-            Mail::send('email',$credenciales, function($msj) use($email,$nomb_usuario){
-                $msj->to($email,$nomb_usuario);
-                $msj->subject('Agenda de Cita Medica');
-            });
-            return $credenciales;
-
+        $especialidad = $request->input('nombre_especialidad');
+        $nomb_centro_medico = $request->input('nombre_centroMedico');
+        $nomb_medico = $request->input('nombre_medico');
+        $fecha = DB::select('SELECT fecha FROM v_citas where id_medico = :id', ['id' => $request->input('id_medico')])[0]->fecha;
+        $date = Carbon::parse($fecha);
+        $date = $date->format('d/m/Y');
+        $hora = DB::select('SELECT hora FROM v_citas where id_medico = :id', ['id' => $request->input('id_medico')])[0]->hora;
+        $formato_hora = explode("-", $hora);
+        $nomb_usuario = $request->input('nomb_usuario');
+        $credenciales = [
+            'email' => $email,
+            'username' =>  $nomb_usuario,
+            'especialidad' => $especialidad,
+            'nomb_centro_medico' => $nomb_centro_medico,
+            'nomb_medico' => $nomb_medico,
+            'fecha' => $date,
+            'hora' => $formato_hora[0]
+        ];
+        Mail::send('email', $credenciales, function ($msj) use ($email, $nomb_usuario) {
+            $msj->to($email, $nomb_usuario);
+            $msj->subject('Agenda de Cita Medica');
+        });
+        return $credenciales;
+    }
+    public function email_comprobante(Request $request)
+    {
+        $email = $request->input('email');
+        $especialidad = $request->input('nombre_especialidad');
+        $nomb_medico = $request->input('nombre_medico');
+        $fecha = Carbon::now();
+        $date = Carbon::parse($fecha);
+        $date = $date->format('d/m/Y');
+        $cedula = $request->input('identificacion');
+        $nomb_usuario = $request->input('nomb_usuario');
+        $num_comprobante = $request->input('id');
+        $precio = $request->input('amount');
+        $credenciales = [
+            'email' => $email,
+            'username' =>  $nomb_usuario,
+            'especialidad' => $especialidad,
+            'nomb_medico' => $nomb_medico,
+            'fecha' => $date,
+            'identificacion' => $cedula,
+            'num_comprobante' => $num_comprobante,
+            'precio' => $precio
+        ];
+        Mail::send('comprobante', $credenciales, function ($msj) use ($email, $nomb_usuario) {
+            $msj->to($email, $nomb_usuario);
+            $msj->subject('Comprobante de Cita Medica');
+        });
+        return $credenciales;
     }
 
     /**
@@ -172,7 +199,6 @@ class CitasController extends Controller
     public function __construct()
     {
         //['index','noticias']
-        $this->middleware('auth:sanctum')->except(['index','citas']);
+        $this->middleware('auth:sanctum')->except(['index', 'citas']);
     }
-
 }
