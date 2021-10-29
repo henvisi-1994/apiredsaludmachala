@@ -110,6 +110,11 @@ class CitasController extends Controller
         $nomb_usuario = $request->input('nomb_usuario');
         $num_comprobante = $request->input('id');
         $precio = $request->input('amount');
+        $hora = $request->input('hora');
+        $auxhora = explode("-", $hora);
+        $nomb_centMedico = $request->input('centroMedico');
+        $fecha_cita = $request->input('fecha_cita');
+        $auxFecha = Carbon::parse($fecha_cita);
         $credenciales = [
             'email' => $email,
             'username' =>  $nomb_usuario,
@@ -118,7 +123,10 @@ class CitasController extends Controller
             'fecha' => $date,
             'identificacion' => $cedula,
             'num_comprobante' => $num_comprobante,
-            'precio' => $precio
+            'precio' => $precio,
+            'auxhora' => $auxhora[0],
+            'nomb_centMedico' => $nomb_centMedico,
+            'auxFecha' => $auxFecha->format('d/m/Y')
         ];
         Mail::send('comprobante', $credenciales, function ($msj) use ($email, $nomb_usuario) {
             $msj->to($email, $nomb_usuario);
