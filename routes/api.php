@@ -58,7 +58,7 @@ Route::post('/update_detalle_centro_medicos/{id}', [App\Http\Controllers\Detalle
 //Rutas de Registro
 Route::resource('usuario', 'UsuarioController');
 Route::get('/obtener_usuario', [App\Http\Controllers\UsuarioController::class, 'obtener_usuario']);
-Route::post('/update_usuario/{id}', [App\Http\Controllers\UsuarioController::class, 'update'])->name('update_usuario');
+Route::post('/update_usuario', [App\Http\Controllers\UsuarioController::class, 'update_perfil'])->name('update_usuario');
 //Rutas de Citas
 Route::resource('citas', 'CitasController');
 Route::get('/obtener_citas', [App\Http\Controllers\CitasController::class, 'obtener_citas']);

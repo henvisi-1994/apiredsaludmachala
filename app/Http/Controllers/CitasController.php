@@ -59,7 +59,9 @@ class CitasController extends Controller
         $cita->id_especialidad = $request->input('id_especialidad');
         $cita->id_horario = $request->input('id_horario');
         $cita->id_medico = $request->input('id_medico');
-        $cita->nomb_usuario = $request->input('nomb_usuario');
+        //$cita->nomb_usuario = $request->input('nomb_usuario');
+        $cita->id_usuario = $request->input('id_usuario');
+
         $cita->save();
         return $cita;
         /*return response()->json([

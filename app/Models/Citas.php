@@ -13,6 +13,6 @@ class Citas extends Model
         'id_especialidad',
         'id_medico',
         'id_horario',
-        'nomb_usuario'
+        'id_usuario'
     ];
 }

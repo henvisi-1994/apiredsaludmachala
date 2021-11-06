@@ -54,29 +54,27 @@ class UsuarioController extends Controller
             'direccion' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string', 'min:8'],
         ]);*/
-       // if ($v) {
+        // if ($v) {
         $usuario = User::where('email', $request->input('email'))->first();
-        if($usuario){
-            return response()->json(['Mensaje'=>'Email Repetido'], 400);
-        }
-        else{
+        if ($usuario) {
+            return response()->json(['Mensaje' => 'Email Repetido'], 400);
+        } else {
             $usuario = new User();
             $usuario->name = $request->input('name');
             $usuario->email = $request->input('email');
             $usuario->telefono = $request->input('telefono');
             $usuario->identificacion = $request->input('identificacion');
             $usuario->direccion = $request->input('direccion');
-            $usuario->password =Hash::make($request->input('password'));
+            $usuario->password = Hash::make($request->input('password'));
             $usuario->save();
             return response()->json($usuario, 200);
         }
 
 
         //}
-           /* else{
+        /* else{
                 return response()->json("Error al Guardar Registro", 400);
             }*/
-
     }
 
     /**
@@ -111,34 +109,97 @@ class UsuarioController extends Controller
     {
         $name = ' ';
         $ruta = ' ';
-        $v = $this->validate(request(), [
+        /*$v = $this->validate(request(), [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'telefono' => ['required', 'string', 'max:10','min:9'],
             'identificacion' => ['required', 'string', 'max:13','min:10'],
             'direccion' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string', 'min:8'],
-        ]);
-        if ($v) {
+        ]);*/
+        // if ($v) {
+        $usuario = User::where('id', $id)->first();
+        $usuario = User::find($id)->firstOrFail();
+        $usuario->name = $request->input('name');
+        $usuario->email = $request->input('email');
+        $usuario->telefono = $request->input('telefono');
+        $usuario->identificacion = $request->input('identificacion');
+        $usuario->direccion = $request->input('direccion');
+        $usuario->password = Hash::make($request->input('password'));
+        //return $usuario;
 
-            $usuario = User::where('id', $id)->first();
-            $usuario = User::find($id)->firstOrFail();
-            $usuario->name = $request->input('name');
-            $usuario->email = $request->input('email');
-            $usuario->telefono = $request->input('telefono');
-            $usuario->identificacion = $request->input('identificacion');
-            $usuario->direccion = $request->input('direccion');
-            $usuario->password = $request->input('password');
+        if ($request->input('password') != "") {
             DB::table('users')
-                ->where('id_noticia', $id)
+                ->where('id', $id)
                 ->update(
                     ['name' => $usuario->name, 'email' => $usuario->email, 'telefono' => $usuario->telefono, 'identificacion' => $usuario->identificacion, 'direccion' => $usuario->direccion, 'password' => $usuario->password]
                 );
-            return response()->json($usuario, 200);;
         } else {
-            return response()->json("Error al Actualizar Registro", 400);
+            DB::table('users')
+                ->where('id', $id)
+                ->update(
+                    ['name' => $usuario->name, 'email' => $usuario->email, 'telefono' => $usuario->telefono, 'identificacion' => $usuario->identificacion, 'direccion' => $usuario->direccion]
+                );
         }
+
+        //return response()->json($usuario, 200);
+        return response()->json(['Mensaje' => 'Usuario actualizado con exito'], 200);
+
+
+        /*} else {
+            return response()->json("Error al Actualizar Registro", 400);
+        }*/
     }
+
+    public function update_perfil(Request $request)
+    {
+        $name = ' ';
+        $ruta = ' ';
+        /*$v = $this->validate(request(), [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'telefono' => ['required', 'string', 'max:10','min:9'],
+            'identificacion' => ['required', 'string', 'max:13','min:10'],
+            'direccion' => ['required', 'string', 'max:255'],
+            'password' => ['required', 'string', 'min:8'],
+        ]);*/
+        // if ($v) {
+        $id = $request->input('id');
+        $usuario = User::where('id', $id)->first();
+        $usuario = User::find($id)->firstOrFail();
+        $usuario->name = $request->input('name');
+        $usuario->email = $request->input('email');
+        $usuario->telefono = $request->input('telefono');
+        $usuario->identificacion = $request->input('identificacion');
+        $usuario->direccion = $request->input('direccion');
+        $usuario->password = Hash::make($request->input('password'));
+        //return $usuario;
+        $clave = $request->input('clave');
+        if ($clave == "L@GH#h2zqG*B") {
+            if ($request->input('password') != "") {
+                DB::table('users')
+                    ->where('id', $id)
+                    ->update(
+                        ['name' => $usuario->name, 'email' => $usuario->email, 'telefono' => $usuario->telefono, 'identificacion' => $usuario->identificacion, 'direccion' => $usuario->direccion, 'password' => $usuario->password]
+                    );
+            } else {
+                DB::table('users')
+                    ->where('id', $id)
+                    ->update(
+                        ['name' => $usuario->name, 'email' => $usuario->email, 'telefono' => $usuario->telefono, 'identificacion' => $usuario->identificacion, 'direccion' => $usuario->direccion]
+                    );
+            }
+        }
+
+        //return response()->json($usuario, 200);
+        return response()->json(['Mensaje' => 'Usuario actualizado con exito'], 200);
+
+
+        /*} else {
+            return response()->json("Error al Actualizar Registro", 400);
+        }*/
+    }
+
 
     /**
      * Remove the specified resource from storage.
@@ -156,6 +217,6 @@ class UsuarioController extends Controller
     public function __construct()
     {
         //['index','noticias']
-        $this->middleware('auth:sanctum')->except(['index', 'store']);
+        $this->middleware('auth:sanctum')->except(['index', 'store', 'update_perfil']);
     }
 }
