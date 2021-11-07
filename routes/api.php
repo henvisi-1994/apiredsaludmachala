@@ -69,3 +69,5 @@ Route::get('/obtener_tarjeta/{identificacion}', [App\Http\Controllers\GestionPag
 Route::post('/email_cita', [App\Http\Controllers\CitasController::class, 'email_cita'])->name('email_cita');
 //Rutas de EmailComprobante
 Route::post('/email_comprobante', [App\Http\Controllers\CitasController::class, 'email_comprobante'])->name('email_comprobante');
+//Rutas de Historial
+Route::get('/historial/{id}', [App\Http\Controllers\CitasController::class, 'historial'])->name('historial');

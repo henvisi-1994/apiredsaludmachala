@@ -206,6 +206,11 @@ class CitasController extends Controller
     {
         return view('citas');
     }
+    public function historial($id)
+    {
+        $historial = DB::select('SELECT * FROM v_citas where id_usuario = :id', ['id' => $id]);
+        return $historial;
+    }
     public function __construct()
     {
         //['index','noticias']
