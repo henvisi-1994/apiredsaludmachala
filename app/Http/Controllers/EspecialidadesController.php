@@ -6,6 +6,7 @@ use App\Models\DetalleCentrosMedicos;
 use App\Models\Especialidades;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 
 
@@ -18,9 +19,15 @@ class EspecialidadesController extends Controller
      */
     public function index()
     {
-        $especialidades = DB::select('select * from especialidades');
-        return $especialidades;
+        if (Cache::has('especialidades')) {
+            $especialidades = Cache::get('especialidades');
+        } else {
+            $especialidades = DB::select('select * from especialidades');
+            Cache::put('especialidades', $especialidades);
+        }
 
+
+        return $especialidades;
     }
     public function obtener_especialidades()
     {
@@ -106,7 +113,7 @@ class EspecialidadesController extends Controller
             DB::table('especialidades')
                 ->where('id_especialidad', $id)
                 ->update(
-                    ['nombre_especialidad' => $especialidad->nombre_especialidad,'valor' => $especialidad->valor]
+                    ['nombre_especialidad' => $especialidad->nombre_especialidad, 'valor' => $especialidad->valor]
                 );
             return redirect('especialidades');
         } else {
@@ -124,13 +131,12 @@ class EspecialidadesController extends Controller
     {
         $detalle_especialidad = DB::select('SELECT *from detalle_centros_medicos where id_especialidad = :id', ['id' => $id]);
         $medico_produccion = DB::select('SELECT *from medico_produccions where id_especialidad = :id', ['id' => $id]);
-        $size_especialidad=count($detalle_especialidad);
-        $size_medico_prod=count($medico_produccion);
-        if($size_especialidad==0&&$size_medico_prod==0){
-        $especialidad = Especialidades::find($id);
-        $especialidad->delete();
-        }
-        else{
+        $size_especialidad = count($detalle_especialidad);
+        $size_medico_prod = count($medico_produccion);
+        if ($size_especialidad == 0 && $size_medico_prod == 0) {
+            $especialidad = Especialidades::find($id);
+            $especialidad->delete();
+        } else {
             return response()->json("Especialidad Existente, No puede Eliminar");
         }
         //
@@ -142,7 +148,6 @@ class EspecialidadesController extends Controller
     public function __construct()
     {
         //['index','noticias']
-        $this->middleware('auth:sanctum')->except(['index','especialidades']);
+        $this->middleware('auth:sanctum')->except(['index', 'especialidades']);
     }
-
 }

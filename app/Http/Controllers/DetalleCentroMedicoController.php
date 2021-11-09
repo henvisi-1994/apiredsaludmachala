@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DetalleCentrosMedicos;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 
 
@@ -17,9 +18,13 @@ class DetalleCentroMedicoController extends Controller
      */
     public function index()
     {
-        $detalle_centro_medico = DB::select('select * from v_detalle_centros_medicos');
+        if (Cache::has('detalle_centro_medico')) {
+            $detalle_centro_medico = Cache::get('detalle_centro_medico');
+        } else {
+            $detalle_centro_medico = DB::select('select * from v_detalle_centros_medicos');
+            Cache::put('detalle_centro_medico', $detalle_centro_medico);
+        }
         return $detalle_centro_medico;
-
     }
     public function obtener_detalle_centro_medicos()
     {
@@ -55,7 +60,7 @@ class DetalleCentroMedicoController extends Controller
             $detalle_centro_medico->id_centroMedico = $request->input('id_centroMedico');
             $detalle_centro_medico->id_especialidad = $request->input('id_especialidad');
             $detalle_centro_medico->save();
-            return ;
+            return;
         } else {
             return back()->withInput($request->all());
         }
@@ -106,7 +111,7 @@ class DetalleCentroMedicoController extends Controller
                 ->update(
                     ['id_centroMedico' => $detalle_centro_medico->id_centroMedico, 'id_especialidad' => $detalle_centro_medico->id_especialidad]
                 );
-            return ;
+            return;
         } else {
             return back()->withInput($request->all());
         }
@@ -131,7 +136,6 @@ class DetalleCentroMedicoController extends Controller
     public function __construct()
     {
         //['index','noticias']
-        $this->middleware('auth:sanctum')->except(['index','detallecentrosmedicos']);
+        $this->middleware('auth:sanctum')->except(['index', 'detallecentrosmedicos']);
     }
-
 }
