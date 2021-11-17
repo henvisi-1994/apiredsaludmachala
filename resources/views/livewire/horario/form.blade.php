@@ -14,7 +14,7 @@
     <div class="form-group">
         <label>Medico</label>
             <select name="Medico" class="form-control"v-model="horario.id_medico">
-                <option v-for="medico in medicos"v-bind:value="medico.id_medico">@{{medico.nombre_medico}}</option>
+                <option v-for="medico in medicos"v-bind:value="medico.id_medico">@{{medico.nombre_medico}} - @{{medico.nombre_centroMedico}}</option>
               </select>
     </div>
 </div>

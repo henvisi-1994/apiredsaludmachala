@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade as PDF;
 
 
 
@@ -25,8 +26,8 @@ class CitasController extends Controller
     }
     public function obtener_citas()
     {
-        $citas = Citas::all();
-        return response()->json($citas, 200);
+        $citas = DB::select('select * from v_citas');
+        return $citas;
     }
 
     /**
@@ -130,9 +131,14 @@ class CitasController extends Controller
             'nomb_centMedico' => $nomb_centMedico,
             'auxFecha' => $auxFecha->format('d/m/Y')
         ];
-        Mail::send('comprobante', $credenciales, function ($msj) use ($email, $nomb_usuario) {
+        $nombre_archivo=$num_comprobante.'.pdf';
+        $pdf = PDF::loadView('comprobante_pdf', $credenciales);
+        $pdf->setPaper('a4', 'portrait');
+        /*->save(storage_path('app/public/comprobante/') . $nombre_archivo);*/
+        Mail::send('comprobante', $credenciales, function ($msj) use ($email, $nomb_usuario,$pdf,$nombre_archivo) {
             $msj->to($email, $nomb_usuario);
             $msj->subject('Comprobante de Cita Medica');
+            $msj->attachData($pdf->output(),$nombre_archivo);
         });
         return $credenciales;
     }

@@ -1,3 +1,4 @@
+<input type="text" v-model="search_especialidades" class="form-control" placeholder="Buscar"/>
 <table id="categories" class="table table-bordered table-striped">
     <thead>
         <tr>
@@ -8,7 +9,7 @@
     </thead>
     <tbody>
 
-        <tr v-for="especialidad in especialidades">
+        <tr v-for="especialidad in buscar_especialidad()">
             <td>@{{especialidad.nombre_especialidad}}</td>
             <td>@{{especialidad.valor}}</td>
             <td><button class="btn btn-primary" v-on:click.prevent="editEspecialidad(especialidad)"><i class="far fa-edit"></i></button></td>

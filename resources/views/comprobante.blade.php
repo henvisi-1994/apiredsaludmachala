@@ -115,14 +115,14 @@ button {
 </style>
 </head>
 <body yahoo="yahoo">
-<table width="100%"  cellspacing="0" cellpadding="0">
+<table width="100%"  >
   <tbody>
     <tr>
-      <td><table width="600"  align="center" cellpadding="0" cellspacing="0">
+      <td><table width="600"  align="center" >
           <!-- Main Wrapper Table with initial width set to 60opx -->
           <tbody>
             <tr>
-              <td style="padding-top: 5%"><table bgcolor="#2D2E82" class="top" width="48%"  align="center" cellpadding="0" cellspacing="0" style="padding:10px 10px 10px 10px;">
+              <td style="padding-top: 5%"><table bgcolor="#2D2E82" class="top" width="48%"  align="center"  style="padding:10px 10px 10px 10px;">
                   <!-- First header column with Logo -->
                   <tbody >
                     <tr>
@@ -135,7 +135,7 @@ button {
             </tr>
             <tr>
               <!-- HTML Spacer row -->
-              <td style="font-size: 0; line-height: 0;" height="20"><table width="96%" align="left"  cellpadding="0" cellspacing="0">
+              <td style="font-size: 0; line-height: 0;" height="20"><table width="96%" align="left">
                   <tr>
                     <td style="font-size: 0; line-height: 0;" height="20">&nbsp;</td>
                   </tr>
@@ -143,7 +143,7 @@ button {
             </tr>
             <tr>
               <!-- HTML IMAGE SPACER -->
-              <td style="font-size: 0; line-height: 0;" height="20"><table align="center"  cellpadding="0" cellspacing="0" >
+              <td style="font-size: 0; line-height: 0;" height="20"><table align="center" >
                   <tr>
                     <td ><img src="https://apiapp.saludmachala.gob.ec/img/logoredsaudapp.png"  alt="" height="" width="90%" class=""></td>
                   </tr>
@@ -151,7 +151,7 @@ button {
             </tr>
             <tr>
               <!-- HTML Spacer row -->
-              <td style="font-size: 0; line-height: 0;" height="20"><table width="96%" align="left"  cellpadding="0" cellspacing="0">
+              <td style="font-size: 0; line-height: 0;" height="20"><table width="96%" align="left">
                   <tr>
                     <td style="font-size: 0; line-height: 0;" height="20">&nbsp;</td>
                   </tr>
@@ -159,13 +159,13 @@ button {
             </tr>
             <tr>
               <!-- Introduction area -->
-              <td><table width="96%"  align="left" cellpadding="0" cellspacing="0">
+              <td><table width="96%"  align="left">
                   <tr>
                     <!-- row container for TITLE/EMAIL THEME -->
                     <td align="center"bgcolor="#2D2E82" style="font-size: 32px; font-weight: 300; line-height: 2.5em; color: #FFFFFF; font-family: sans-serif;"style="padding:10px 10px 10px 10px;">COMPROBANTE DE PAGO</td>
                   </tr>
                   <tr>
-                    <td style="font-size: 0; line-height: 0;" height="20"><table width="96%" align="left"  cellpadding="0" cellspacing="0">
+                    <td style="font-size: 0; line-height: 0;" height="20"><table width="96%" align="left">
                         <tr>
                           <!-- HTML Spacer row -->
                           <td style="font-size: 0; line-height: 0;" height="20">&nbsp;</td>

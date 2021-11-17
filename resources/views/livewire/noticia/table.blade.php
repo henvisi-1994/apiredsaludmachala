@@ -1,3 +1,4 @@
+<input type="text" v-model="search_noticias" class="form-control" placeholder="Buscar"/>
 <table id="categories" class="table table-bordered table-striped">
     <thead>
         <tr>
@@ -11,7 +12,7 @@
     </thead>
     <tbody>
 
-        <tr v-for="noticia in noticias">
+        <tr v-for="noticia in buscar_noticias()">
             <td>@{{noticia.titulo_noticia}}</td>
             <td><img :src="noticia.imagen_noticia" class="image-fluid img-thumbnail"></td>
 

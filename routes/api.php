@@ -40,7 +40,7 @@ Route::post('/updatehoras/{id}', [App\Http\Controllers\HorasController::class, '
 Route::resource('horarios', 'HorariosController');
 Route::get('/obtener_horario', [App\Http\Controllers\HorariosController::class, 'obtener_horario']);
 Route::post('/updatehorario/{id}', [App\Http\Controllers\HorariosController::class, 'update'])->name('updatehorario');
-
+Route::get('/habilitar_horarios/{id}', [App\Http\Controllers\HorariosController::class, 'habilitar_horarios'])->name('habilitar_horarios');
 //Rutas de Medicos
 Route::resource('medicos', 'MedicosController');
 Route::get('/obtener_medicos', [App\Http\Controllers\MedicosController::class, 'obtener_medicos']);

@@ -13,16 +13,14 @@ document.write(
 document.write('<script src="vendor/toastr/js/toastr.js"></script>');
 
 require("./bootstrap");
-import JQuery from 'jquery'
-import { filter } from 'lodash';
-let $ = JQuery
-
+import JQuery from "jquery";
+import { filter } from "lodash";
+let $ = JQuery;
 
 window.Vue = require("vue").default;
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
+import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
 // Make BootstrapVue available throughout your project
-Vue.use(BootstrapVue)
-
+Vue.use(BootstrapVue);
 
 /**
  * The following block of code may be used to automatically register your
@@ -50,7 +48,7 @@ const app = new Vue({
     created: function() {
         this.getNoticias();
         this.getCentrosMedicos();
-        this.getDetalleEspecialidades() ;
+        this.getDetalleEspecialidades();
         this.getEspecialidades();
         this.getHoras();
         this.getHorarios();
@@ -59,27 +57,33 @@ const app = new Vue({
         this.getMedicosProd();
     },
     data: {
+        search: "",
+        search_citas: "",
+        search_noticias: "",
+        search_especialidades: "",
+        search_medicos: "",
+        search_medicos_prod: "",
         user: { email: "", password: "" },
-        id_especialidad:0,
-        nombre_centroMedico:"",
-        id_centroMedico:0,
+        id_especialidad: 0,
+        nombre_centroMedico: "",
+        id_centroMedico: 0,
         edit: false,
         noticias: [],
         centros_medicos: [],
-        especialidades:[],
-        detalle_especialidades:[],
-        auxiliar:[],
-        medicos:[],
-        citas:[],
-        medicos_prod:[],
-        horas:[],
-        horarios:[],
+        especialidades: [],
+        detalle_especialidades: [],
+        auxiliar: [],
+        medicos: [],
+        citas: [],
+        medicos_prod: [],
+        horas: [],
+        horarios: [],
         edit_centro_medico: false,
         edit_especialidad: false,
-        edit_detalleCentroMedico:false,
+        edit_detalleCentroMedico: false,
         edit_hora: false,
-        edit_horario:false,
-        tipo_medico:"Medico Fijo",
+        edit_horario: false,
+        tipo_medico: "Medico Fijo",
         noticia: {
             titulo_noticia: "",
             imagen_noticia: "",
@@ -89,47 +93,39 @@ const app = new Vue({
             hora_fin_noticia: "",
             fecha_fin_noticia: ""
         },
-        detalleCentroMedico:{
-            id_detalleCentroMed:0,
-            id_centroMedico:0,
-            id_especialidad:0
-
+        detalleCentroMedico: {
+            id_detalleCentroMed: 0,
+            id_centroMedico: 0,
+            id_especialidad: 0
         },
         centro_medico: {
-
             nombre_centroMedico: "",
             direccion_centroMedico: "",
             telef_centroMedico: "",
             ubic_centroMedico: "",
-            email:"",
+            email: ""
         },
         especialidad: {
-
             nombre_especialidad: "",
-            valor: 0,
-
-
+            valor: 0
         },
         hora: {
-
-            hora: "",
-
+            hora: ""
         },
         horario: {
-            id_horario:0,
+            id_horario: 0,
             fecha: "",
             id_hora: 0,
-            id_medico: 0,
-
+            id_medico: 0
         },
         medico: {
             tipo_medico: "",
-            id_detalleCentroMed:0,
-            nombre_medico:""
+            id_detalleCentroMed: 0,
+            nombre_medico: ""
         },
         medico_prod: {
-            nomb_medico:"",
-            id_especialidad:0
+            nomb_medico: "",
+            id_especialidad: 0
         }
     },
 
@@ -293,6 +289,23 @@ const app = new Vue({
             if (!files.length) return;
             this.createImage(files[0]);
         },
+        buscar_noticias: function() {
+            //element.name == this.search
+            if (!!this.search_noticias) {
+                return this.noticias.filter(item => {
+                    return (
+                            item.titulo_noticia +
+                            item.descripcion_noticia +
+                            item.fecha_inicio_noticia +
+                            item.fecha_fin_noticia
+                        )
+                        .toLowerCase()
+                        .includes(this.search_noticias.toLowerCase());
+                });
+            } else {
+                return this.noticias;
+            }
+        },
 
         //Metodos de Centros Medicos
         //*********************************************** */
@@ -322,8 +335,10 @@ const app = new Vue({
                     }
                 })
                 .then(response => {
-                    this.detalleCentroMedico.id_centroMedico=response.data.id_centroMedico;
-                    this.nombre_centroMedico=response.data.nombre_centroMedico;
+                    this.detalleCentroMedico.id_centroMedico =
+                        response.data.id_centroMedico;
+                    this.nombre_centroMedico =
+                        response.data.nombre_centroMedico;
                     this.obtener_detalleIdCentMed();
                     this.getCentrosMedicos();
                     this.centro_medico = {
@@ -331,7 +346,7 @@ const app = new Vue({
                         direccion_centroMedico: "",
                         telef_centroMedico: "",
                         ubic_centroMedico: "",
-                        email:""
+                        email: ""
                     };
                     this.errors = [];
                     $("#modal-centrosmedicos").modal("hide");
@@ -341,56 +356,62 @@ const app = new Vue({
                     }
 
                     toastr.success("Se añadido un nuevo Centro Medico");
-                    window.locationf = "http://apiredsaludmachala.net/centrosmedicos";
+                    window.locationf =
+                        "http://apiredsaludmachala.net/centrosmedicos";
                     $("#modal-asignarEspecialidad").modal("show");
-
                 })
                 .catch(error => {
                     this.errors = error.response.data;
                 });
         },
-        createDetalleCentromedico:function(){
+        createDetalleCentromedico: function() {
             let urlGuardarCentroMedico = "api/detalle_centro_medico";
             let token = localStorage.getItem("token");
-            if(!this.edit_detalleCentroMedico){
+            if (!this.edit_detalleCentroMedico) {
                 let aux;
-                aux = this.auxiliar.map(function(e) { return e.id_especialidad; }).indexOf( this.detalleCentroMedico.id_especialidad);
+                aux = this.auxiliar
+                    .map(function(e) {
+                        return e.id_especialidad;
+                    })
+                    .indexOf(this.detalleCentroMedico.id_especialidad);
                 console.log(aux);
-                if(aux==-1){
-                      axios
+                if (aux == -1) {
+                    axios
 
-                .post(urlGuardarCentroMedico, this.detalleCentroMedico, {
-                    headers: {
-                        Authorization: "Bearer " + token //the token is a variable which holds the token
-                    }
-                })
-                .then(response => {
-                    this.getCentrosMedicos();
-                    this.getDetalleEspecialidades();
-                    this.obtener_detalleIdCentMed();
-                    this.detalleCentroMedico.id_especialidad=0;
-                    this.errors = [];
-                    toastr.success("Se ha asignado una nueva Especialidad a Centro Medico");
-                })
-                .catch(error => {
-                    this.errors = error.response.data;
-                });
-
+                        .post(
+                            urlGuardarCentroMedico,
+                            this.detalleCentroMedico, {
+                                headers: {
+                                    Authorization: "Bearer " + token //the token is a variable which holds the token
+                                }
+                            }
+                        )
+                        .then(response => {
+                            this.getCentrosMedicos();
+                            this.getDetalleEspecialidades();
+                            this.obtener_detalleIdCentMed();
+                            this.detalleCentroMedico.id_especialidad = 0;
+                            this.errors = [];
+                            toastr.success(
+                                "Se ha asignado una nueva Especialidad a Centro Medico"
+                            );
+                        })
+                        .catch(error => {
+                            this.errors = error.response.data;
+                        });
+                } else {
+                    toastr.error(
+                        "La especialidad ya existe en el Centro Medico... Asigne Otra"
+                    );
                 }
-                else{
-                    toastr.error("La especialidad ya existe en el Centro Medico... Asigne Otra");
-                }
-
-            }
-            else{
+            } else {
                 this.updateDetalleCentroMedico();
-
             }
-
-
         },
-        updateDetalleCentroMedico: function(){
-            let url = "api/update_detalle_centro_medicos/" + this.detalleCentroMedico.id_detalleCentroMed;
+        updateDetalleCentroMedico: function() {
+            let url =
+                "api/update_detalle_centro_medicos/" +
+                this.detalleCentroMedico.id_detalleCentroMed;
 
             let token = localStorage.getItem("token");
             axios
@@ -402,29 +423,33 @@ const app = new Vue({
                 .then(response => {
                     this.getDetalleEspecialidades();
                     this.obtener_detalleIdCentMed();
-                    this.edit_detalleCentroMedico=false;
-                    this.detalleCentroMedico.id_especialidad=0;
+                    this.edit_detalleCentroMedico = false;
+                    this.detalleCentroMedico.id_especialidad = 0;
                     toastr.success("Especialidad actualizada con éxito");
                 })
                 .catch(error => {
                     this.errors = error.response.data;
                 });
-
         },
         editCentroMedico: function(centroMedico) {
             this.edit_centro_medico = true;
             this.centro_medico.id_centroMedico = centroMedico.id_centroMedico;
-            this.centro_medico.nombre_centroMedico = centroMedico.nombre_centroMedico;
-            this.centro_medico.direccion_centroMedico = centroMedico.direccion_centroMedico;
-            this.centro_medico.telef_centroMedico = centroMedico.telef_centroMedico;
-            this.centro_medico.ubic_centroMedico = centroMedico.ubic_centroMedico;
+            this.centro_medico.nombre_centroMedico =
+                centroMedico.nombre_centroMedico;
+            this.centro_medico.direccion_centroMedico =
+                centroMedico.direccion_centroMedico;
+            this.centro_medico.telef_centroMedico =
+                centroMedico.telef_centroMedico;
+            this.centro_medico.ubic_centroMedico =
+                centroMedico.ubic_centroMedico;
             this.centro_medico.email = centroMedico.email;
-
 
             $("#modal-centromedicoed").modal("show");
         },
         updateCentroMedico: function() {
-            let url = "api/updatecentrosmedicos/" + this.centro_medico.id_centroMedico;
+            let url =
+                "api/updatecentrosmedicos/" +
+                this.centro_medico.id_centroMedico;
 
             let token = localStorage.getItem("token");
             axios
@@ -434,8 +459,8 @@ const app = new Vue({
                     }
                 })
                 .then(response => {
-                    this.detalleCentroMedico.id_centroMedico=this.centro_medico.id_centroMedico;
-                    this.nombre_centroMedico=this.centro_medico.nombre_centroMedico;
+                    this.detalleCentroMedico.id_centroMedico = this.centro_medico.id_centroMedico;
+                    this.nombre_centroMedico = this.centro_medico.nombre_centroMedico;
                     this.obtener_detalleIdCentMed();
                     this.getCentrosMedicos();
                     this.centro_medico = {
@@ -443,7 +468,7 @@ const app = new Vue({
                         direccion_centroMedico: "",
                         telef_centroMedico: "",
                         ubic_centroMedico: "",
-                        email:""
+                        email: ""
                     };
                     $("#modal-centromedicoed").modal("hide");
                     $("#modal-editAsigcentromedico").modal("show");
@@ -470,7 +495,7 @@ const app = new Vue({
         },
         //fin de metodos de centros medicos
 
- //Metodos de Especialidades
+        //Metodos de Especialidades
         //*********************************************** */
         //**************************************************** */
         getDetalleEspecialidades() {
@@ -515,8 +540,7 @@ const app = new Vue({
                     this.getEspecialidades();
                     this.especialidad = {
                         nombre_especialidad: "",
-                        valor: 0,
-
+                        valor: 0
                     };
                     this.errors = [];
                     $("#modal-especialidades").modal("hide");
@@ -526,7 +550,8 @@ const app = new Vue({
                     }
 
                     toastr.success("Se ha añadido una Nueva Especialidad");
-                    window.locationf = "http://apiredsaludmachala.net/especialidades";
+                    window.locationf =
+                        "http://apiredsaludmachala.net/especialidades";
                 })
                 .catch(error => {
                     this.errors = error.response.data;
@@ -535,13 +560,15 @@ const app = new Vue({
         editEspecialidad: function(especialidad) {
             this.edit_especialidad = true;
             this.especialidad.id_especialidad = especialidad.id_especialidad;
-            this.especialidad.nombre_especialidad = especialidad.nombre_especialidad;
+            this.especialidad.nombre_especialidad =
+                especialidad.nombre_especialidad;
             this.especialidad.valor = especialidad.valor;
 
             $("#modal-especialidaded").modal("show");
         },
         updateEspecialidad: function() {
-            let url = "api/updateespecialidades/" + this.especialidad.id_especialidad;
+            let url =
+                "api/updateespecialidades/" + this.especialidad.id_especialidad;
 
             let token = localStorage.getItem("token");
             axios
@@ -554,8 +581,7 @@ const app = new Vue({
                     this.getEspecialidades();
                     this.especialidad = {
                         nombre_especialidad: "",
-                        valor: 0,
-
+                        valor: 0
                     };
                     $("#modal-especialidaded").modal("hide");
                     toastr.success("Especialidad actualizada con éxito");
@@ -579,18 +605,31 @@ const app = new Vue({
                     toastr.success("Especialidad eliminada con éxito");
                 });
         },
-        obtener_especialidades(event){
-            let id_centroMedico=event.target.value;
-           this.auxiliar = this.detalle_especialidades.filter(centroMedico => centroMedico.id_centroMedico==id_centroMedico);
-
+        obtener_especialidades(event) {
+            let id_centroMedico = event.target.value;
+            this.auxiliar = this.detalle_especialidades.filter(
+                centroMedico => centroMedico.id_centroMedico == id_centroMedico
+            );
         },
-        obtener_detalleIdCentMed(){
-            let id_centroMedico= this.detalleCentroMedico.id_centroMedico;
+        buscar_especialidad: function() {
+            //element.name == this.search
+            if (!!this.search_especialidades) {
+                return this.especialidades.filter(item => {
+                    return item.nombre_especialidad
+                        .toLowerCase()
+                        .includes(this.search_especialidades.toLowerCase());
+                });
+            } else {
+                return this.especialidades;
+            }
+        },
+        obtener_detalleIdCentMed() {
+            let id_centroMedico = this.detalleCentroMedico.id_centroMedico;
             /*console.log(id_centroMedico);
            this.auxiliar = this.detalle_especialidades.filter(centroMedico => centroMedico.id_centroMedico==id_centroMedico);
 
            console.log(this.auxiliar);*/
-           let urlDetalleCentroMedico = "api/obtener_detalle_centro_medicos";
+            let urlDetalleCentroMedico = "api/obtener_detalle_centro_medicos";
             let token = localStorage.getItem("token");
 
             axios
@@ -600,14 +639,18 @@ const app = new Vue({
                     }
                 })
                 .then(response => {
-                    this.auxiliar = response.data.filter(centroMedico => centroMedico.id_centroMedico==id_centroMedico);
+                    this.auxiliar = response.data.filter(
+                        centroMedico =>
+                        centroMedico.id_centroMedico == id_centroMedico
+                    );
                 });
-
         },
-        editAsigEspec: function(detalleCentroMedico){
+        editAsigEspec: function(detalleCentroMedico) {
             this.edit_detalleCentroMedico = true;
-            this.detalleCentroMedico.id_especialidad = detalleCentroMedico.id_especialidad;
-            this.detalleCentroMedico.id_detalleCentroMed = detalleCentroMedico.id_detalleCentroMed;
+            this.detalleCentroMedico.id_especialidad =
+                detalleCentroMedico.id_especialidad;
+            this.detalleCentroMedico.id_detalleCentroMed =
+                detalleCentroMedico.id_detalleCentroMed;
         },
         deleteAsigEspec: function(id_detalleCentroMed) {
             let url = "api/detalle_centro_medico/" + id_detalleCentroMed;
@@ -624,12 +667,10 @@ const app = new Vue({
                     this.obtener_detalleIdCentMed();
                     toastr.success("Especialidad eliminada con éxito");
                 });
-
         },
-                //fin de metodos de especialidades
+        //fin de metodos de especialidades
 
-
-         //Metodos de Medicos
+        //Metodos de Medicos
         //*********************************************** */
         //**************************************************** */
         getMedicos() {
@@ -649,44 +690,42 @@ const app = new Vue({
         createMedicos: function() {
             let urlGuardarMedicos = "api/medicos";
             let token = localStorage.getItem("token");
-            if(this.tipo_medico=='Medico Fijo'){
+            if (this.tipo_medico == "Medico Fijo") {
                 axios
 
-                .post(urlGuardarMedicos, this.medico, {
-                    headers: {
-                        Authorization: "Bearer " + token //the token is a variable which holds the token
-                    }
-                })
-                .then(response => {
-                    this.getMedicos();
-                    this.medico = {
-                        tipo_medico: "",
-                        id_detalleCentroMed:0,
-                        nombre_medico:""
-                    };
-                    this.errors = [];
-                    $("#modal-medicos").modal("hide");
-                    if ($(".modal-backdrop").is(":visible")) {
-                        $("body").removeClass("modal-open");
-                        $(".modal-backdrop").remove();
-                    }
+                    .post(urlGuardarMedicos, this.medico, {
+                        headers: {
+                            Authorization: "Bearer " + token //the token is a variable which holds the token
+                        }
+                    })
+                    .then(response => {
+                        this.getMedicos();
+                        this.medico = {
+                            tipo_medico: "",
+                            id_detalleCentroMed: 0,
+                            nombre_medico: ""
+                        };
+                        this.errors = [];
+                        $("#modal-medicos").modal("hide");
+                        if ($(".modal-backdrop").is(":visible")) {
+                            $("body").removeClass("modal-open");
+                            $(".modal-backdrop").remove();
+                        }
 
-                    toastr.success("Se añadido un Nuevo Medico");
-                    window.locationf = "http://apiredsaludmachala.net/medicos";
-                })
-                .catch(error => {
-                    this.errors = error.response.data;
-                });
-
-            }
-            else{
+                        toastr.success("Se añadido un Nuevo Medico");
+                        window.locationf =
+                            "http://apiredsaludmachala.net/medicos";
+                    })
+                    .catch(error => {
+                        this.errors = error.response.data;
+                    });
+            } else {
                 this.createMedicosProd();
             }
-
         },
         editMedico: function(medico) {
             this.edit_medico = true;
-            this.tipo_medico="Medico Fijo";
+            this.tipo_medico = "Medico Fijo";
             this.medico.id_medico = medico.id_medico;
             this.medico.tipo_medico = medico.tipo_medico;
             this.medico.id_detalleCentroMed = medico.id_detalleCentroMed;
@@ -698,31 +737,29 @@ const app = new Vue({
             let url = "api/updatemedicos/" + this.medico.id_medico;
 
             let token = localStorage.getItem("token");
-            if(this.tipo_medico=='Medico Fijo'){
+            if (this.tipo_medico == "Medico Fijo") {
                 axios
-                .post(url, this.medico, {
-                    headers: {
-                        Authorization: "Bearer " + token //the token is a variable which holds the token
-                    }
-                })
-                .then(response => {
-                    this.getMedicos();
-                    this.medico = {
-                        tipo_medico: "",
-                        id_detalleCentroMed:0,
-                        nombre_medico:""
-                    };
-                    $("#modal-medicoed").modal("hide");
-                    toastr.success("Medico actualizado con éxito");
-                })
-                .catch(error => {
-                    this.errors = error.response.data;
-                });
-
-            }else{
+                    .post(url, this.medico, {
+                        headers: {
+                            Authorization: "Bearer " + token //the token is a variable which holds the token
+                        }
+                    })
+                    .then(response => {
+                        this.getMedicos();
+                        this.medico = {
+                            tipo_medico: "",
+                            id_detalleCentroMed: 0,
+                            nombre_medico: ""
+                        };
+                        $("#modal-medicoed").modal("hide");
+                        toastr.success("Medico actualizado con éxito");
+                    })
+                    .catch(error => {
+                        this.errors = error.response.data;
+                    });
+            } else {
                 this.updateMedicoProd();
             }
-
         },
         deleteMedico: function(id_medico) {
             let url = "api/medicos/" + id_medico;
@@ -739,12 +776,28 @@ const app = new Vue({
                     toastr.success("Medico eliminado con éxito");
                 });
         },
-        obtener_tipo_medico(event){
-            this.tipo_medico=event.target.value;
+        obtener_tipo_medico(event) {
+            this.tipo_medico = event.target.value;
+        },
+        buscar_medico: function() {
+            //element.name == this.search
+            if (!!this.search_medicos) {
+                return this.medicos.filter(item => {
+                    return (
+                            item.nombre_medico +
+                            item.nombre_centroMedico +
+                            item.nombre_especialidad
+                        )
+                        .toLowerCase()
+                        .includes(this.search_medicos.toLowerCase());
+                });
+            } else {
+                return this.medicos;
+            }
         },
         //fin de metodos de Medico
 
- //Metodos de Medicos de Produccion
+        //Metodos de Medicos de Produccion
         //*********************************************** */
         //**************************************************** */
         getMedicosProd() {
@@ -763,7 +816,7 @@ const app = new Vue({
         },
         createMedicosProd: function() {
             let urlGuardarMedicosProd = "api/medicos_produccion";
-            this.medico_prod.nomb_medico=this.medico.nombre_medico;
+            this.medico_prod.nomb_medico = this.medico.nombre_medico;
             let token = localStorage.getItem("token");
             axios
 
@@ -775,8 +828,8 @@ const app = new Vue({
                 .then(response => {
                     this.getMedicosProd();
                     this.medico_prod = {
-                        nomb_medico:"",
-                        id_especialidad:0
+                        nomb_medico: "",
+                        id_especialidad: 0
                     };
                     this.errors = [];
                     $("#modal-medicos").modal("hide");
@@ -794,7 +847,7 @@ const app = new Vue({
         },
         editMedicoProd: function(medicoProd) {
             this.edit_medico = true;
-            this.tipo_medico="";
+            this.tipo_medico = "";
             this.medico_prod.id_medico_prod = medicoProd.id_medico_prod;
             this.medico.nombre_medico = medicoProd.nombre_medico;
             this.medico_prod.id_especialidad = medicoProd.id_especialidad;
@@ -803,8 +856,9 @@ const app = new Vue({
             $("#modal-medicoed").modal("show");
         },
         updateMedicoProd: function() {
-            let url = "api/updatemedicos_prod/" + this.medico_prod.id_medico_prod;
-            this.medico_prod.nomb_medico=this.medico.nombre_medico;
+            let url =
+                "api/updatemedicos_prod/" + this.medico_prod.id_medico_prod;
+            this.medico_prod.nomb_medico = this.medico.nombre_medico;
             let token = localStorage.getItem("token");
             axios
                 .post(url, this.medico_prod, {
@@ -815,11 +869,13 @@ const app = new Vue({
                 .then(response => {
                     this.getMedicosProd();
                     this.medico = {
-                        nomb_medico:"",
-                        id_especialidad:0
+                        nomb_medico: "",
+                        id_especialidad: 0
                     };
                     $("#modal-medicoed").modal("hide");
-                    toastr.success("Medico de Produccion actualizado con éxito");
+                    toastr.success(
+                        "Medico de Produccion actualizado con éxito"
+                    );
                 })
                 .catch(error => {
                     this.errors = error.response.data;
@@ -840,9 +896,21 @@ const app = new Vue({
                     toastr.success("Medico de Produccion eliminado con éxito");
                 });
         },
+        buscar_medico_prod: function() {
+            //element.name == this.search
+            if (!!this.search_medicos_prod) {
+                return this.medicos_prod.filter(item => {
+                    return (item.nombre_medico + item.nombre_especialidad)
+                        .toLowerCase()
+                        .includes(this.search_medicos_prod.toLowerCase());
+                });
+            } else {
+                return this.medicos_prod;
+            }
+        },
         //fin de metodos de Medico de Produccion
 
-         //Metodos de Horas
+        //Metodos de Horas
         //*********************************************** */
         //**************************************************** */
         getHoras() {
@@ -872,7 +940,7 @@ const app = new Vue({
                 .then(response => {
                     this.getHoras();
                     this.hora = {
-                        hora: "",
+                        hora: ""
                     };
                     this.errors = [];
                     $("#modal-horas").modal("hide");
@@ -908,7 +976,7 @@ const app = new Vue({
                 .then(response => {
                     this.getHoras();
                     this.hora = {
-                        hora: "",
+                        hora: ""
                     };
                     $("#modal-horaed").modal("hide");
                     toastr.success("Hora actualizada con éxito");
@@ -933,7 +1001,7 @@ const app = new Vue({
                 });
         },
         //fin de metodos de Horas
-         //Metodos de Horas
+        //Metodos de Horas
         //*********************************************** */
         //**************************************************** */
         getCitas() {
@@ -950,8 +1018,25 @@ const app = new Vue({
                     this.citas = response.data;
                 });
         },
+        buscar_citas: function() {
+            //element.name == this.search
+            if (!!this.search_citas) {
+                return this.citas.filter(item => {
+                    return (
+                            item.nombre_especialidad +
+                            item.nombre_centroMedico +
+                            item.nombre_medico +
+                            item.fecha
+                        )
+                        .toLowerCase()
+                        .includes(this.search_citas.toLowerCase());
+                });
+            } else {
+                return this.citas;
+            }
+        },
         //Fin Metodo de Citas
- //Metodos de Horarios
+        //Metodos de Horarios
         //*********************************************** */
         //**************************************************** */
         getHorarios() {
@@ -983,7 +1068,7 @@ const app = new Vue({
                     this.horario = {
                         fecha: "",
                         id_hora: 0,
-                        id_medico: 0,
+                        id_medico: 0
                     };
                     this.errors = [];
                     $("#modal-horarios").modal("hide");
@@ -1023,7 +1108,7 @@ const app = new Vue({
                     this.horario = {
                         fecha: "",
                         id_hora: 0,
-                        id_medico: 0,
+                        id_medico: 0
                     };
                     $("#modal-horarioed").modal("hide");
                     toastr.success("Horario actualizado con éxito");
@@ -1047,6 +1132,39 @@ const app = new Vue({
                     toastr.success("Horario eliminado con éxito");
                 });
         },
+        buscar: function() {
+            //element.name == this.search
+            if (!!this.search) {
+                return this.horarios.filter(item => {
+                    return (
+                            item.fecha +
+                            item.nombre_centroMedico +
+                            item.nombre_medico +
+                            item.estado
+                        )
+                        .toLowerCase()
+                        .includes(this.search.toLowerCase());
+                });
+            } else {
+                return this.horarios;
+            }
+        },
+        habilitar_horarios(id) {
+            let urlHabilitarHorarios = "api/habilitar_horarios/" + id;
+            let token = localStorage.getItem("token");
+
+            axios
+                .get(urlHabilitarHorarios, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    toastr.success("Se ha habilitado la Cita");
+                    this.getHorarios();
+                });
+        },
+
         //fin de metodos de Horario
         logout() {
             axios
@@ -1075,7 +1193,7 @@ const app = new Vue({
             axios
                 .post(urlGuardarlogin, this.user)
 
-                .then(response => {
+            .then(response => {
                     this.autenticacion();
                     this.user = {
                         email: "",

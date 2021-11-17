@@ -141,6 +141,20 @@ class HorariosController extends Controller
     {
         return view('horarios');
     }
+        public function habilitar_horarios($id)
+    {
+        $horario = Horarios::find($id)->firstOrFail();
+            $horario->estado = 'true';
+            DB::table('horarios')
+                ->where('id_horario', $id)
+                ->update(
+                    ['estado' => $horario->estado]
+                );
+                return response()->json([
+                    'mensaje' => "Horario Eliminada"
+                ]);
+
+    }
     public function __construct()
     {
         //['index','noticias']

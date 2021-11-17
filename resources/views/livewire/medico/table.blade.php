@@ -1,6 +1,7 @@
 <div>
     <b-tabs content-class="mt-3">
       <b-tab title="Medicos de Red de Salud" active>
+          <input type="text" v-model="search_medicos" class="form-control" placeholder="Buscar"/>
           <table id="categories" class="table table-bordered table-striped">
         <thead>
             <tr>
@@ -14,7 +15,7 @@
         </thead>
         <tbody>
 
-            <tr v-for="medico in medicos">
+            <tr v-for="medico in buscar_medico()">
                 <td>@{{medico.nombre_medico}}</td>
                 <td>@{{medico.tipo_medico}}</td>
                 <td>@{{medico.nombre_centroMedico}}</td>
@@ -29,6 +30,8 @@
     </table>
 </b-tab>
       <b-tab title="Medicos de Produccion">
+        <input type="text" v-model="search_medicos_prod" class="form-control" placeholder="Buscar"/>
+
         <table id="prod" class="table table-bordered table-striped">
             <thead>
                 <tr>
@@ -40,7 +43,7 @@
             </thead>
             <tbody>
 
-                <tr v-for="medico in medicos_prod">
+                <tr v-for="medico in buscar_medico_prod()">
                     <td>@{{medico.nombre_medico}}</td>
                     <td>@{{medico.nombre_especialidad}}</td>
                     <td><button class="btn btn-primary" v-on:click.prevent="editMedicoProd(medico)"><i class="far fa-edit"></i></button></td>
