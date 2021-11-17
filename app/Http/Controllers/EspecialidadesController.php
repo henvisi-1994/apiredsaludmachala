@@ -34,6 +34,16 @@ class EspecialidadesController extends Controller
         $especialidades = Especialidades::all();
         return response()->json($especialidades, 200);
     }
+        public function obtener_especialidades_med_prod()
+    {
+        if (Cache::has('especialidades_med_prod')) {
+            $especialidades = Cache::get('especialidades_med_prod');
+        } else {
+            $especialidades = DB::select('select DISTINCT nombre_especialidad, id_especialidad from v_medico_prod');
+            Cache::put('especialidades_med_prod', $especialidades);
+        }
+        return $especialidades;
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -148,6 +158,6 @@ class EspecialidadesController extends Controller
     public function __construct()
     {
         //['index','noticias']
-        $this->middleware('auth:sanctum')->except(['index', 'especialidades']);
+        $this->middleware('auth:sanctum')->except(['index', 'especialidades','obtener_especialidades_med_prod']);
     }
 }

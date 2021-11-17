@@ -31,6 +31,7 @@ Route::post('/updatecentrosmedicos/{id}', [App\Http\Controllers\CentrosMedicosCo
 Route::resource('especialidades', 'EspecialidadesController');
 Route::get('/obtener_especialidades', [App\Http\Controllers\EspecialidadesController::class, 'obtener_especialidades']);
 Route::post('/updateespecialidades/{id}', [App\Http\Controllers\EspecialidadesController::class, 'update'])->name('updateespecialidades');
+Route::get('/especialidades_med_prod', [App\Http\Controllers\EspecialidadesController::class, 'obtener_especialidades_med_prod'])->name('especialidades_med_prod');
 
 //Rutas de Horas
 Route::resource('horas', 'HorasController');
