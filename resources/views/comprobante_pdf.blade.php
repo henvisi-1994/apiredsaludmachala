@@ -119,27 +119,6 @@
                      <!-- Main Wrapper Table with initial width set to 60opx -->
                      <tbody>
                         <tr>
-                           <td style="padding-top: 5%">
-                              <table bgcolor="#2D2E82" class="top" width="48%"  align="center"  style="padding:10px 10px 10px 10px;">
-                                 <!-- First header column with Logo -->
-                                 <tbody >
-                                    <tr>
-
-                                    </tr>
-                                 </tbody>
-                              </table>
-                           </td>
-                        </tr>
-                        <tr>
-                           <!-- HTML IMAGE SPACER -->
-                           <td style="font-size: 0; line-height: 0;" height="20">
-                              <table align="center"  >
-                                 <tr>
-                                 </tr>
-                              </table>
-                           </td>
-                        </tr>
-                        <tr>
                            <!-- Introduction area -->
                            <td>
                               <table width="70%"  align="center">
