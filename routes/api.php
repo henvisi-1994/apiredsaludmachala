@@ -72,3 +72,6 @@ Route::post('/email_cita', [App\Http\Controllers\CitasController::class, 'email_
 Route::post('/email_comprobante', [App\Http\Controllers\CitasController::class, 'email_comprobante'])->name('email_comprobante');
 //Rutas de Historial
 Route::get('/historial/{id}', [App\Http\Controllers\CitasController::class, 'historial'])->name('historial');
+//Rutas de Calificacion
+Route::post('/calificacion_app', [App\Http\Controllers\CalificacionAppController::class, 'store'])->name('calificacion_app');
+Route::resource('calificacion', 'CalificacionAppController');

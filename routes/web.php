@@ -27,6 +27,5 @@ Route::get('/horas', [App\Http\Controllers\HorasController::class, 'horas'])->na
 Route::get('/horarios', [App\Http\Controllers\HorariosController::class, 'horarios'])->name('horarios')->middleware('auth');
 Route::get('/medicos', [App\Http\Controllers\MedicosController::class, 'medicos'])->name('medicos')->middleware('auth');
 Route::get('/citas', [App\Http\Controllers\CitasController::class, 'citas'])->name('citas')->middleware('auth');
-Route::get('/terminosycondiciones', function () {
-    return view('terminosycondiciones');
-});
+Route::get('/terminosycondiciones', function () {return view('terminosycondiciones');});
+Route::get('/calificaciones', function () {return view('calificaciones');});

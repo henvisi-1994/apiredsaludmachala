@@ -277,6 +277,11 @@ return [
             'url'  => 'medicos',
             'icon' => 'fas fa-fw fa-user-md',
         ],
+                [
+            'text' => 'Calificaciones',
+            'url'  => 'calificaciones',
+            'icon' => 'fas fa-fw fa-star-half-alt',
+        ],
 
         ['header' => 'account_settings'],
         [

@@ -55,12 +55,14 @@ const app = new Vue({
         this.getCitas();
         this.getMedicos();
         this.getMedicosProd();
+        this.getCalificaciones();
     },
     data: {
         search: "",
         search_citas: "",
         search_noticias: "",
         search_especialidades: "",
+        search_calificacion: "",
         search_medicos: "",
         search_medicos_prod: "",
         user: { email: "", password: "" },
@@ -73,6 +75,7 @@ const app = new Vue({
         especialidades: [],
         detalle_especialidades: [],
         auxiliar: [],
+        calificaciones: [],
         medicos: [],
         citas: [],
         medicos_prod: [],
@@ -306,7 +309,41 @@ const app = new Vue({
                 return this.noticias;
             }
         },
+        //Metodos de Calificacion
+        //*********************************************** */
+        //**************************************************** */
+        getCalificaciones() {
+            let urlcalificaciones = "api/calificacion";
+            let token = localStorage.getItem("token");
 
+            axios
+                .get(urlcalificaciones, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.calificaciones = response.data;
+                });
+        },
+        buscar_calificaciones: function() {
+            //element.name == this.search
+            if (!!this.search_calificacion) {
+                return this.calificaciones.filter(item => {
+                    return (
+                            item.nombre_especialidad +
+                            item.nombre_centroMedico +
+                            item.nombre_medico +
+                            item.fecha +
+                            item.calificacion
+                        )
+                        .toLowerCase()
+                        .includes(this.search_calificacion.toLowerCase());
+                });
+            } else {
+                return this.calificaciones;
+            }
+        },
         //Metodos de Centros Medicos
         //*********************************************** */
         //**************************************************** */

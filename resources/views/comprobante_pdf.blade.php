@@ -9,7 +9,8 @@
       <!-- important in CSS is used to prevent the styles of currently inline CSS from overriding the ones mentioned in media queries when corresponding screen sizes are encountered -->
       <style type="text/css">
          body {
-         margin: 0;
+         background-image: url('https://apiapp.saludmachala.gob.ec/img/marca_agua3.png');
+        background-repeat: no-repeat;
          }
          body, table, td, p, a, li, blockquote {
          -webkit-text-size-adjust: none!important;
@@ -115,20 +116,19 @@
          <tbody>
             <tr>
                <td>
-                  <table width="600"  align="center">
+                  <table width="100%"  align="center">
                      <!-- Main Wrapper Table with initial width set to 60opx -->
                      <tbody>
                         <tr>
                            <!-- Introduction area -->
                            <td>
-                              <table width="70%"  align="center">
+                              <table width="70%"  align="center" style="padding-top: 18%">
                                  <tr>
                                     <!-- Row container for Intro/ Description -->
 
-                                    <td align="left" style="font-size: 14px; font-style: normal; font-weight: 100; color: #929292; line-height: 1.8; text-align:justify; padding:10px 20px 0px 20px; font-family: sans-serif;">
+                                    <td align="left" style="font-size: 14px; font-style: normal; font-weight: 100; color: black; line-height: 1.8; text-align:justify; padding:10px 20px 0px 20px; font-family: sans-serif;">
                                     <p style="font-size: 18
                                           px; color:black; font-family: sans-serif; ">COMPROBANTE DE PAGO</p>
-                                       <p ><img src="https://apiapp.saludmachala.gob.ec/img/logoredsaudapp.png"  alt="" height="200px" width="200px" class=""></p>
                                        <p>Fecha: {{$fecha}}</p>
                                        <p>Paciente: {{$username}}</p>
                                        <p>Cedula Cliente: {{$identificacion}}</p>
@@ -137,12 +137,12 @@
                                        <p>Centro Medico: {{$nomb_centMedico}}</p>
                                        <p>Fecha de Cita: {{$auxFecha}}</p>
                                        <p>Hora de Cita: {{$auxhora}}</p>
-                                       <table class="punteado">
+                                       <table>
                                           <caption align="center">DETALLE</caption>
                                           <colgroup>
-                                             <col style="width: 60%"/>
-                                             <col style="width: 30%"/>
-                                             <col style="width: 30%"/>
+                                             <col style="width: 50%"/>
+                                             <col style="width: 75% padding-left: 5%"/>
+                                             <col style="width: 100%"/>
                                           </colgroup>
                                           <thead>
                                              <tr>
@@ -154,8 +154,9 @@
                                           <tbody>
                                              <tr>
                                                 <th>CONSULTA {{$especialidad}}</th>
-                                                <td>CANTIDAD 1.0</td>
-                                                <td>{{$precio}}</td>
+                                                <td> <blockquote>      1    </blockquote>
+                                                </td>
+                                                <td><blockquote>      {{$precio}}  </blockquote></td>
                                              </tr>
                                           </tbody>
                                        </table>
