@@ -29,8 +29,8 @@
                                     </div>
                                 </div>
                             </td>
-            <td><button class="btn btn-primary" v-on:click.prevent="editHorario(horario)"><i class="far fa-edit"></i></button></td>
-            <td v-if="horario.estado == false"><button class="btn btn-success"  v-on:click.prevent="habilitar_horarios(horario.id_horario)"><i class="fas fa-toggle-on"></i></button></td>
+            <td v-if="horario.estado == true"><button class="btn btn-primary" v-on:click.prevent="editHorario(horario)"><i class="far fa-edit"></i></button></td>
+            <td v-if="existe_cita_horario(horario.id_horario)"><button class="btn btn-success"  v-on:click.prevent="habilitar_horarios(horario.id_horario)"><i class="fas fa-toggle-on"></i></button></td>
             <td v-if="horario.estado == true"><button class="btn btn-danger" v-on:click.prevent="deleteHorario(horario.id_horario)"><i class="fas fa-trash"></i></button></td>
         </tr>
     </tbody>

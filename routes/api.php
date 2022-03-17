@@ -75,3 +75,5 @@ Route::get('/historial/{id}', [App\Http\Controllers\CitasController::class, 'his
 //Rutas de Calificacion
 Route::post('/calificacion_app', [App\Http\Controllers\CalificacionAppController::class, 'store'])->name('calificacion_app');
 Route::resource('calificacion', 'CalificacionAppController');
+//Actualizar Contrasena
+Route::post('/cambiar_contrasena/{id}', [App\Http\Controllers\AuthController::class, 'cambiarContrasena'])->name('cambiarContrasena');

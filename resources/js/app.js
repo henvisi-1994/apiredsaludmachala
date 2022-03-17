@@ -59,6 +59,11 @@ const app = new Vue({
     },
     data: {
         search: "",
+        change_password: {
+            password_old: "",
+            password_new: "",
+            password_confirm: ""
+        },
         search_citas: "",
         search_noticias: "",
         search_especialidades: "",
@@ -528,6 +533,10 @@ const app = new Vue({
                 .then(response => {
                     this.getCentrosMedicos();
                     toastr.success("Centro Medico eliminado con éxito");
+                })
+                .catch(error => {
+                    toastr.error("Elimine Especialidades Agregadas para eliminar Centro Medico");
+                    this.errors = error.response.data;
                 });
         },
         //fin de metodos de centros medicos
@@ -703,6 +712,10 @@ const app = new Vue({
                     this.getDetalleEspecialidades();
                     this.obtener_detalleIdCentMed();
                     toastr.success("Especialidad eliminada con éxito");
+                })
+                .catch(error => {
+                    toastr.error("Existen Citas Asignadas, no puede eliminar Especialidad");
+                    this.errors = error.response.data;
                 });
         },
         //fin de metodos de especialidades
@@ -772,7 +785,6 @@ const app = new Vue({
         },
         updateMedico: function() {
             let url = "api/updatemedicos/" + this.medico.id_medico;
-
             let token = localStorage.getItem("token");
             if (this.tipo_medico == "Medico Fijo") {
                 axios
@@ -1237,11 +1249,58 @@ const app = new Vue({
                         password: ""
                     };
                     localStorage.setItem("token", response.data.access_token);
+                    localStorage.setItem("id_user", response.data.id);
+
                     this.errors = [];
                 })
                 .catch(error => {
+                    toastr.error(error.response.data.messaje);
                     this.errors = error.response.data;
                 });
+        },
+        cambiarPassword: function() {
+            let id_user = localStorage.getItem("id_user");
+            let url = "api/cambiar_contrasena/" + id_user;
+            let token = localStorage.getItem("token");
+            if (
+                this.change_password.password_new ==
+                this.change_password.password_confirm
+            ) {
+                axios
+                    .post(url, this.change_password, {
+                        headers: {
+                            Authorization: "Bearer " + token //the token is a variable which holds the token
+                        }
+                    })
+                    .then(response => {
+                        this.change_password = {
+                            password_old: "",
+                            password_new: "",
+                            password_confirm: ""
+                        };
+                        toastr.success(
+                            "Su contraseña ha sido cambiada exitosamente"
+                        );
+                    })
+                    .catch(error => {
+                        toastr.error(error.response.data.messaje);
+                        this.errors = error.response.data;
+                    });
+            } else {
+                console.log(url);
+
+                toastr.error("Su contraseña no coincide, Revisar");
+            }
+        },
+        existe_cita_horario: function(id) {
+            const resultado = this.citas.find(cita => cita.id_horario === id);
+            const horario = this.horarios.find(horario => horario.id_horario === id);
+            if (resultado !== undefined) {
+                return false;
+            } else if (horario.estado == false) {
+                return true;
+
+            }
         }
     }
 });

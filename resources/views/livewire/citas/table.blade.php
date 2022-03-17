@@ -5,6 +5,7 @@
             <th>Centro Medico</th>
             <th>Especialidad</th>
             <th>Medico</th>
+            <th>Paciente</th>
             <th>Fecha</th>
             <th>Hora</th>
         </tr>
@@ -15,6 +16,7 @@
             <td>@{{cita.nombre_centroMedico}}</td>
             <td>@{{cita.nombre_especialidad}}</td>
             <td>@{{cita.nombre_medico}}</td>
+            <td>@{{cita.name}}</td>
             <td>@{{cita.fecha}}</td>
             <td>@{{cita.hora}}</td>
         </tr>
