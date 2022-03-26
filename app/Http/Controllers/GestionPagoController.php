@@ -64,6 +64,11 @@ class GestionPagoController extends Controller
     public function __construct()
     {
         //['index','noticias']
-        $this->middleware('auth:sanctum')->except(['index','obtener_tarjeta']);
+        $this->middleware('auth:sanctum')->except(['index','obtener_tarjeta','status']);
+    }
+    public function status(Request $request){
+        $status ='Ha realizado el pago correctamente';
+        return $status;
+
     }
 }

@@ -133,7 +133,8 @@
                                        <p>Paciente: {{$username}}</p>
                                        <p>Cedula Cliente: {{$identificacion}}</p>
                                        <p>Médico: {{$nomb_medico}}</p>
-                                       <p>Dcto Nro: {{$num_comprobante}}</p>
+                                       <p>Cod. Autorizacion: {{$autorizacion}}</p>
+                                        <p>Codigo de Transaccion: {{$num_comprobante}}</p>
                                        <p>Centro Medico: {{$nomb_centMedico}}</p>
                                        <p>Fecha de Cita: {{$auxFecha}}</p>
                                        <p>Hora de Cita: {{$auxhora}}</p>

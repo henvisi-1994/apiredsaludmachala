@@ -118,6 +118,7 @@ class CitasController extends Controller
         $nomb_centMedico = $request->input('centroMedico');
         $fecha_cita = $request->input('fecha_cita');
         $auxFecha = Carbon::parse($fecha_cita);
+        $num_autorizacion=$request->input('autorizacion');
         $credenciales = [
             'email' => $email,
             'username' =>  $nomb_usuario,
@@ -129,7 +130,8 @@ class CitasController extends Controller
             'precio' => $precio,
             'auxhora' => $auxhora[0],
             'nomb_centMedico' => $nomb_centMedico,
-            'auxFecha' => $auxFecha->format('d/m/Y')
+            'auxFecha' => $auxFecha->format('d/m/Y'),
+            'autorizacion'=>$num_autorizacion
         ];
         $nombre_archivo=$num_comprobante.'.pdf';
         $pdf = PDF::loadView('comprobante_pdf', $credenciales);

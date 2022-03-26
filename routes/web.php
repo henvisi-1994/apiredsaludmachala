@@ -29,4 +29,6 @@ Route::get('/medicos', [App\Http\Controllers\MedicosController::class, 'medicos'
 Route::get('/citas', [App\Http\Controllers\CitasController::class, 'citas'])->name('citas')->middleware('auth');
 Route::get('/terminosycondiciones', function () {return view('terminosycondiciones');});
 Route::get('/calificaciones', function () {return view('calificaciones');});
-Route::get('/cambiarContrasena', function () {return view('auth.passwords.cambiarcontrasena');});
+Route::get('/cambiarContrasena', function () {return view('cambiarcontrasena');});
+Route::get('/status', [App\Http\Controllers\GestionPagoController::class, 'status'])->name('status');
+
