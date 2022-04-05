@@ -5,6 +5,7 @@
             <th>Fecha</th>
             <th>Hora</th>
             <th>Medico</th>
+            <th>Especialidad</th>
             <th>Centro Medico</th>
             <th>Estado</th>
             <th colspan="2">&nbsp;</th>
@@ -16,6 +17,7 @@
             <td>@{{horario.fecha}}</td>
             <td>@{{horario.hora}}</td>
             <td>@{{horario.nombre_medico}}</td>
+            <td>@{{horario.nombre_especialidad}}</td>
             <td>@{{horario.nombre_centroMedico}}</td>
                                         <td>
                                <div v-if="horario.estado == true">

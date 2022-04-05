@@ -64,13 +64,15 @@ const app = new Vue({
             password_new: "",
             password_confirm: ""
         },
+        id_especialidad_m: 0,
+        auxiliar_m: [],
         search_citas: "",
         search_noticias: "",
         search_especialidades: "",
         search_calificacion: "",
         search_medicos: "",
         search_medicos_prod: "",
-        user: { email: "", password: "" },
+        user: { email: "", password: "", clave_autorizacion: "" },
         id_especialidad: 0,
         nombre_centroMedico: "",
         id_centroMedico: 0,
@@ -197,6 +199,8 @@ const app = new Vue({
                     window.locationf = "http://apiredsaludmachala.net/noticias";
                 })
                 .catch(error => {
+                    toastr.error("Por favor rellene los campos");
+                    toastr.error(error.response.data.message);
                     this.errors = error.response.data;
                 });
         },
@@ -403,6 +407,8 @@ const app = new Vue({
                     $("#modal-asignarEspecialidad").modal("show");
                 })
                 .catch(error => {
+                    toastr.error("Por favor rellene los campos");
+                    toastr.error(error.response.data.message);
                     this.errors = error.response.data;
                 });
         },
@@ -600,6 +606,8 @@ const app = new Vue({
                         "http://apiredsaludmachala.net/especialidades";
                 })
                 .catch(error => {
+                    toastr.error("Por favor rellene los campos");
+                    toastr.error(error.response.data.message);
                     this.errors = error.response.data;
                 });
         },
@@ -655,6 +663,14 @@ const app = new Vue({
             let id_centroMedico = event.target.value;
             this.auxiliar = this.detalle_especialidades.filter(
                 centroMedico => centroMedico.id_centroMedico == id_centroMedico
+            );
+        },
+        obtener_medico(event) {
+            let id_especialidad = event.target.value;
+            this.auxiliar_m.length = 0;
+            console.log("Obtener Medicos");
+            this.auxiliar_m = this.medicos.filter(
+                medico => medico.id_centroMedico == this.id_centroMedico && medico.id_especialidad == id_especialidad
             );
         },
         buscar_especialidad: function() {
@@ -767,6 +783,8 @@ const app = new Vue({
                             "http://apiredsaludmachala.net/medicos";
                     })
                     .catch(error => {
+                        toastr.error("Por favor rellene los campos");
+                        toastr.error(error.response.data.message);
                         this.errors = error.response.data;
                     });
             } else {
@@ -1002,6 +1020,8 @@ const app = new Vue({
                     window.locationf = "http://apiredsaludmachala.net/horas";
                 })
                 .catch(error => {
+                    toastr.error("Por favor rellene los campos");
+                    toastr.error(error.response.data.message);
                     this.errors = error.response.data;
                 });
         },
@@ -1126,10 +1146,12 @@ const app = new Vue({
                         $(".modal-backdrop").remove();
                     }
 
-                    toastr.success("Se ha añadido un Horario");
-                    window.locationf = "http://apiredsaludmachala.net/horarios";
+                    toastr.success("Se ha añadido un Turno");
+                    this.limpiar_turno();
                 })
                 .catch(error => {
+                    toastr.error("Por favor rellene los campos");
+                    toastr.error(error.response.data.message);
                     this.errors = error.response.data;
                 });
         },
@@ -1160,7 +1182,7 @@ const app = new Vue({
                         id_medico: 0
                     };
                     $("#modal-horarioed").modal("hide");
-                    toastr.success("Horario actualizado con éxito");
+                    toastr.success("Turno actualizado con éxito");
                 })
                 .catch(error => {
                     this.errors = error.response.data;
@@ -1178,7 +1200,7 @@ const app = new Vue({
                 })
                 .then(response => {
                     this.getHorarios();
-                    toastr.success("Horario eliminado con éxito");
+                    toastr.success("Turno eliminado con éxito");
                 });
         },
         buscar: function() {
@@ -1189,7 +1211,8 @@ const app = new Vue({
                             item.fecha +
                             item.nombre_centroMedico +
                             item.nombre_medico +
-                            item.estado
+                            item.estado +
+                            item.nombre_especialidad
                         )
                         .toLowerCase()
                         .includes(this.search.toLowerCase());
@@ -1238,25 +1261,30 @@ const app = new Vue({
         },
         login: function() {
             let urlGuardarlogin = "api/logueo";
+            if (this.user.clave_autorizacion == "RFBM8z3q") {
+                axios
+                    .post(urlGuardarlogin, this.user)
 
-            axios
-                .post(urlGuardarlogin, this.user)
+                .then(response => {
+                        this.autenticacion();
+                        this.user = {
+                            email: "",
+                            password: "",
+                            clave_autorizacion: ""
+                        };
+                        localStorage.setItem("token", response.data.access_token);
+                        localStorage.setItem("id_user", response.data.id);
 
-            .then(response => {
-                    this.autenticacion();
-                    this.user = {
-                        email: "",
-                        password: ""
-                    };
-                    localStorage.setItem("token", response.data.access_token);
-                    localStorage.setItem("id_user", response.data.id);
+                        this.errors = [];
+                    })
+                    .catch(error => {
+                        toastr.error(error.response.data.messaje);
+                        this.errors = error.response.data;
+                    });
+            } else {
+                toastr.error("Por favor Ingrese Correctamente la Clave de Autorizacion")
+            }
 
-                    this.errors = [];
-                })
-                .catch(error => {
-                    toastr.error(error.response.data.messaje);
-                    this.errors = error.response.data;
-                });
         },
         cambiarPassword: function() {
             let id_user = localStorage.getItem("id_user");
@@ -1301,6 +1329,13 @@ const app = new Vue({
                 return true;
 
             }
+        },
+        limpiar_turno: function() {
+            this.horario.fecha = "";
+            this.horario.id_hora = 0;
+            this.id_centroMedico = 0;
+            this.id_especialidad_m = 0;
+            this.horario.id_medico = 0;
         }
     }
 });
