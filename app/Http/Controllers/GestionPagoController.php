@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Config;
 
 
 
@@ -20,8 +21,9 @@ class GestionPagoController extends Controller
      */
     public function index()
     {
-        $API_LOGIN_DEV     = "TPP3-EC-SERVER";
-        $API_KEY_DEV       = "JdXTDl2d0o0B8ANZ1heJOq7tf62PC6";
+        $paymentez = Config::get('paymentez');
+        $API_LOGIN_DEV=$paymentez['api_login_dev'];
+        $API_KEY_DEV=$paymentez['api_key_dev'];
         $server_application_code = $API_LOGIN_DEV;
         $server_app_key = $API_KEY_DEV;
         $unix_timestamp = Carbon::now()->timestamp; // Produces something like 1552296328
@@ -42,8 +44,8 @@ class GestionPagoController extends Controller
     }
     public function obtener_tarjeta($identificacion){
         $url="https://ccapi-stg.paymentez.com/v2/card/list?uid=".$identificacion;
-        $API_LOGIN_DEV     = "TPP3-EC-SERVER";
-        $API_KEY_DEV       = "JdXTDl2d0o0B8ANZ1heJOq7tf62PC6";
+        $API_LOGIN_DEV     = env('API_LOGIN_DEV', null);
+        $API_KEY_DEV       = env('API_KEY_DEV', null);
         $server_application_code = $API_LOGIN_DEV;
         $server_app_key = $API_KEY_DEV;
         $unix_timestamp = Carbon::now()->timestamp; // Produces something like 1552296328
