@@ -29,6 +29,15 @@ Route::get('/medicos', [App\Http\Controllers\MedicosController::class, 'medicos'
 Route::get('/citas', [App\Http\Controllers\CitasController::class, 'citas'])->name('citas')->middleware('auth');
 Route::get('/terminosycondiciones', function () {return view('terminosycondiciones');});
 Route::get('/calificaciones', function () {return view('calificaciones');});
+Route::get('/usuarios', function () {return view('usuario');});
 Route::get('/cambiarContrasena', function () {return view('cambiarcontrasena');});
 Route::get('/status', [App\Http\Controllers\GestionPagoController::class, 'status'])->name('status');
+Route::get('/obtener_centros_medicos', [App\Http\Controllers\CentrosMedicosController::class, 'index']);
+Route::get('/especialidad_cm/{id_centroMedico}', [App\Http\Controllers\EspecialidadesController::class, 'especialidad_cm']);
+Route::get('/clear-cache', function () {
+    echo Artisan::call('config:clear');
+    echo Artisan::call('config:cache');
+    echo Artisan::call('cache:clear');
+    echo Artisan::call('route:clear');
+ });
 

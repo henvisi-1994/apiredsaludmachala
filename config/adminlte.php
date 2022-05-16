@@ -282,6 +282,11 @@ return [
             'url'  => 'calificaciones',
             'icon' => 'fas fa-fw fa-star-half-alt',
         ],
+        [
+            'text' => 'Usuarios',
+            'url'  => 'usuarios',
+            'icon' => 'fas fa-fw fa-user',
+        ],
 
         ['header' => 'account_settings'],
         [

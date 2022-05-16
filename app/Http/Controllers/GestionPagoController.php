@@ -62,6 +62,22 @@ class GestionPagoController extends Controller
         return $area['cards'];
 
     }
+    public function reembolso(Request $request){
+        $paymentez = Config::get('paymentez');
+        $API_LOGIN_DEV=$paymentez['api_login_dev'];
+        $API_KEY_DEV=$paymentez['api_key_dev'];
+        $server_application_code = $API_LOGIN_DEV;
+        $server_app_key = $API_KEY_DEV;
+        $unix_timestamp = Carbon::now()->timestamp;
+        $uniq_token_string = $server_app_key.$unix_timestamp;
+        $uniq_token_hash = hash('sha256', $uniq_token_string);
+        $auth_token = base64_encode($server_application_code . ";" . $unix_timestamp . ";" . $uniq_token_hash);
+        $response = Http::withHeaders([
+            'Auth-Token' => $auth_token
+        ])->post('https://ccapi.paymentez.com/v2/transaction/refund/', [
+            'transaction.id	' => $request->id_transaction,
+        ]);
+    }
 
     public function __construct()
     {

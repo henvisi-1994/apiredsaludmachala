@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Horarios;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Horas;
+use App\Models\Citas;
 
 
 
@@ -125,16 +127,23 @@ class HorariosController extends Controller
      */
     public function destroy($id)
     {
-            $horario = Horarios::find($id)->firstOrFail();
+        $horario = Horarios::find($id)->firstOrFail();
+        $cita=Citas::where('id_horario',$id)->get();
+        if(count($cita)==0){
+            $horario->delete();
+        }
+        else{
             $horario->estado = 'false';
             DB::table('horarios')
                 ->where('id_horario', $id)
                 ->update(
                     ['estado' => $horario->estado]
                 );
-                return response()->json([
-                    'mensaje' => "Horario Eliminada"
-                ]);
+        }
+        return response()->json([
+            'mensaje' => "Horario Eliminada"
+        ]);
+
 
     }
     public function horarios()
@@ -155,10 +164,53 @@ class HorariosController extends Controller
                 ]);
 
     }
+    public function carga_masiva(Request $request){
+        $decodificado = base64_decode($request->csv_file);
+        $archivos=[];
+
+        $str = mb_convert_encoding($decodificado, "UTF-8");
+        $archivo=explode(",",$str);
+        for ($i=0; $i <count($archivo)-1 ; $i++) {
+            array_push($archivos,$this->limpieza($archivo[$i]));
+        }
+        foreach ($archivos as &$valor) {
+            $this->guardar_turno($valor,$request->id_medico);
+        }
+
+        return response()->json([
+            'mensaje' => "Se ha guardado exitosamente"
+        ]);
+
+    }
+    public function limpieza($data){
+        if(stristr($data, 'u?Zj?e?ƭ????wf??\zV') === FALSE) {
+            $limpiar=explode("\r\n",$data);
+            return $limpiar[1];
+        }else{
+            $limpiar=explode("u?Zj?e?ƭ????wf??\zV",$data);
+            return explode("ڱ?",$limpiar[1])[1];
+        }
+    }
+    public function guardar_turno($data,$id_medico){
+            $pos=explode(";",$data);
+            $id_hora=$this->busqueda_horario($pos[0])->id_hora;
+            $fecha=$pos[1];
+            $horario = new Horarios();
+            $horario->fecha = $fecha;
+            $horario->id_hora = $id_hora;
+            $horario->id_medico = $id_medico;
+            $horario->estado = 'true';
+            $horario->save();
+    }
+    public function busqueda_horario($data){
+        $horario = Horas::where('hora',$data)->first();
+        return $horario;
+
+    }
     public function __construct()
     {
         //['index','noticias']
-        $this->middleware('auth:sanctum')->except(['index','horarios']);
+        $this->middleware('auth:sanctum')->except(['index','horarios','carga_masiva']);
     }
 
 }

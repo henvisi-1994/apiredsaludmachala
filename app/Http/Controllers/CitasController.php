@@ -8,9 +8,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade as PDF;
-
-
-
+use Maatwebsite\Excel\Facades\Excel;
+use  App\Imports\CsvImport;
+use App\Models\Horarios;
+use App\Models\Horas;
 
 class CitasController extends Controller
 {
@@ -219,9 +220,11 @@ class CitasController extends Controller
         $historial = DB::select('SELECT * FROM v_citas where id_usuario = :id', ['id' => $id]);
         return $historial;
     }
+
     public function __construct()
     {
         //['index','noticias']
-        $this->middleware('auth:sanctum')->except(['index', 'citas']);
+        $this->middleware('auth:sanctum')->except(['index', 'citas','carga_masiva']);
     }
+
 }

@@ -56,6 +56,8 @@ const app = new Vue({
         this.getMedicos();
         this.getMedicosProd();
         this.getCalificaciones();
+        this.getUsuarios();
+
     },
     data: {
         search: "",
@@ -69,6 +71,7 @@ const app = new Vue({
         search_citas: "",
         search_noticias: "",
         search_especialidades: "",
+        search_usuario: "",
         search_calificacion: "",
         search_medicos: "",
         search_medicos_prod: "",
@@ -88,12 +91,14 @@ const app = new Vue({
         medicos_prod: [],
         horas: [],
         horarios: [],
+        usuarios: [],
         edit_centro_medico: false,
         edit_especialidad: false,
         edit_detalleCentroMedico: false,
         edit_hora: false,
         edit_horario: false,
         tipo_medico: "Medico Fijo",
+        is_cargamasiva: false,
         noticia: {
             titulo_noticia: "",
             imagen_noticia: "",
@@ -136,6 +141,10 @@ const app = new Vue({
         medico_prod: {
             nomb_medico: "",
             id_especialidad: 0
+        },
+        turno_masivo: {
+            id_medico: 0,
+            csv_file: ""
         }
     },
 
@@ -668,7 +677,6 @@ const app = new Vue({
         obtener_medico(event) {
             let id_especialidad = event.target.value;
             this.auxiliar_m.length = 0;
-            console.log("Obtener Medicos");
             this.auxiliar_m = this.medicos.filter(
                 medico => medico.id_centroMedico == this.id_centroMedico && medico.id_especialidad == id_especialidad
             );
@@ -1336,6 +1344,114 @@ const app = new Vue({
             this.id_centroMedico = 0;
             this.id_especialidad_m = 0;
             this.horario.id_medico = 0;
-        }
+        },
+        getArchivoCM: function(event) {
+            if (event.target.files && event.target.files.length > 0) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function load() {
+                    //this.image = reader.result;
+                    this.obtener_archivo(reader.result, this.horario.id_medico);
+                }.bind(this);
+                this.file = file;
+            }
+
+        },
+        obtener_archivo: function(file, id_medico) {
+            let token = localStorage.getItem("token");
+            this.turno_masivo.csv_file = file;
+            this.turno_masivo.id_medico = id_medico;
+            axios
+
+                .post('/api/carga_masiva', this.turno_masivo, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    toastr.success(response.data.mensaje);
+                    $("#modal-horarios").modal("hide");
+                    this.is_cargamasiva = false;
+                    this.horario = {
+                        fecha: "",
+                        id_hora: 0,
+                        id_medico: 0
+
+                    };
+                    this.id_centroMedico = 0;
+                    this.id_especialidad_m = 0;
+
+                    this.getHorarios();
+                })
+                .catch(error => {
+                    toastr.error(error.response.data.message);
+                    this.errors = error.response.data;
+                });
+        },
+        carga_masiva: function() {
+            this.is_cargamasiva = true;
+            $("#modal-horarios").modal("show");
+
+        },
+        abrir_nuevo: function() {
+            this.is_cargamasiva = false;
+            $("#modal-horarios").modal("show");
+        },
+        //Metodos de Usuarios
+        //*********************************************** */
+        //**************************************************** */
+        getUsuarios() {
+            let urlUsuarios = "api/obtener_usuario";
+            let token = localStorage.getItem("token");
+
+            axios
+                .get(urlUsuarios, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.usuarios = response.data;
+                });
+        },
+        buscar_usuario: function() {
+            //element.name == this.search
+            if (!!this.search_usuario) {
+                return this.usuarios.filter(item => {
+                    return (
+                            item.name +
+                            item.email +
+                            item.telefono +
+                            item.identificacion +
+                            item.direccion
+                        )
+                        .toLowerCase()
+                        .includes(this.search_usuario.toLowerCase());
+                });
+            } else {
+                return this.usuarios;
+            }
+        },
+        deleteUsuario: function(id) {
+            let url = "api/usuarios/" + id;
+            let token = localStorage.getItem("token");
+
+            axios
+                .delete(url, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.getUsuarios();
+                    toastr.success("Usuario eliminado con éxito");
+                })
+                .catch(error => {
+                    toastr.error(error.response.data.mensaje);
+                    this.errors = error.response.data;
+                });
+        },
+
     }
 });

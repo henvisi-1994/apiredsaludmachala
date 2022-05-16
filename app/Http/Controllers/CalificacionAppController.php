@@ -11,8 +11,8 @@ class CalificacionAppController extends Controller
     public function store(Request $request)
     {
             $id=$request->input('id_cita');
-            $calificacion_app = DB::select('select count(*)from calificacion where id_cita = :id', ['id' => $request->input('id_cita')])[0]->count;
-            if($calificacion_app<1){
+            $calificacion_app=CalificacionApp::where('id_cita',$request->input('id_cita'))->get();
+            if(count($calificacion_app)<1){
                 $calificacion_app = new CalificacionApp();
                 $calificacion_app->id_cita = $request->input('id_cita');
                 $calificacion_app->calificacion = $request->input('calificacion');

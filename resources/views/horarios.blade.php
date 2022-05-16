@@ -5,8 +5,11 @@
 @section('content_header')
 <h1>
     <div class="mt-2 mb-2 ">Horarios</div>
-    <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#modal-horarios">
+    <button type="button" class="btn btn-primary " v-on:click.prevent="abrir_nuevo()">
         Nuevo
+    </button>
+    <button type="button" class="btn btn-success " v-on:click.prevent="carga_masiva()">
+        Carga Masiva de Turnos
     </button>
 </h1>
 @stop

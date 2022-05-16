@@ -77,3 +77,9 @@ Route::post('/calificacion_app', [App\Http\Controllers\CalificacionAppController
 Route::resource('calificacion', 'CalificacionAppController');
 //Actualizar Contrasena
 Route::post('/cambiar_contrasena/{id}', [App\Http\Controllers\AuthController::class, 'cambiarContrasena'])->name('cambiarContrasena');
+//Carga Masiva
+Route::post('/carga_masiva', [App\Http\Controllers\HorariosController::class, 'carga_masiva'])->name('carga_masiva');
+//Rutas de Usuarios
+Route::resource('usuarios', 'UsuarioController');
+Route::get('/obtener_usuario', [App\Http\Controllers\UsuarioController::class, 'obtener_usuario']);
+

@@ -29,6 +29,14 @@ class EspecialidadesController extends Controller
 
         return $especialidades;
     }
+	public function especialidad_cm($id_centroMedico)
+    {
+        $especialidades = DetalleCentrosMedicos::where('id_centroMedico',$id_centroMedico)->join('especialidades', 'detalle_centros_medicos.id_especialidad', '=', 'especialidades.id_especialidad')->get();
+        //$especialidades = DetalleCentrosMedicos::where('id_centroMedico',$id_centroMedico)->get();
+        return $especialidades;
+    }
+
+
     public function obtener_especialidades()
     {
         $especialidades = Especialidades::all();
@@ -158,6 +166,6 @@ class EspecialidadesController extends Controller
     public function __construct()
     {
         //['index','noticias']
-        $this->middleware('auth:sanctum')->except(['index', 'especialidades','obtener_especialidades_med_prod']);
+        $this->middleware('auth:sanctum')->except(['index', 'especialidades','obtener_especialidades_med_prod','especialidad_cm']);
     }
 }

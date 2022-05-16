@@ -12,6 +12,14 @@ class DetalleCentrosMedicos extends Model
     protected $fillable = [
         'id_centroMedico',
         'id_especialidad',
-
     ];
+    public function centro_medico()
+    {
+        return $this->hasOne(CentrosMedicos::class,'id_centroMedico','id_centroMedico');
+    }
+    public function especialidad()
+    {
+        return $this->hasOne(Especialidades::class,'id_especialidad','id_especialidad');
+    }
+
 }

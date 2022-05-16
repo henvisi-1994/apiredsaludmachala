@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Citas;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -209,9 +210,16 @@ class UsuarioController extends Controller
      */
     public function destroy($id)
     {
-        $usuario = User::find($id);
-        $usuario->delete();
-        //
+        $cita=Citas::where('id_usuario',$id)->get();
+        if(count($cita)==0){
+            $usuario = User::find($id);
+            $usuario->delete();
+        }
+        else{
+            return response()->json([
+                'mensaje' => "Usuario tiene cita asignada"
+            ],400);
+        }
     }
 
     public function __construct()
