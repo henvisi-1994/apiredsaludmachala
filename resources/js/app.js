@@ -16,6 +16,7 @@ require("./bootstrap");
 import JQuery from "jquery";
 import { filter } from "lodash";
 let $ = JQuery;
+require('datatables.net-bs4')();
 
 window.Vue = require("vue").default;
 import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
@@ -149,6 +150,12 @@ const app = new Vue({
     },
 
     methods: {
+        tabla() {
+            console.log('Entro a Tabla');
+            this.$nextTick(() => {
+                $('#turnos').DataTable();
+            })
+        },
         getNoticias() {
             let urlNoticias = "api/all";
             let token = localStorage.getItem("token");
@@ -1128,6 +1135,7 @@ const app = new Vue({
                 })
                 .then(response => {
                     this.horarios = response.data;
+                    this.tabla();
                 });
         },
         createHorario: function() {

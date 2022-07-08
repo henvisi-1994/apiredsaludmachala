@@ -1,5 +1,5 @@
 <input type="text" v-model="search" class="form-control" placeholder="Buscar"/>
-<table id="categories" class="table table-bordered table-striped">
+<table id="turnos" class="table table-bordered table-striped">
     <thead>
         <tr>
             <th>Fecha</th>
@@ -13,7 +13,7 @@
     </thead>
     <tbody>
 
-        <tr v-for="horario in buscar()">
+        <tr v-for="horario in horarios">
             <td>@{{horario.fecha}}</td>
             <td>@{{horario.hora}}</td>
             <td>@{{horario.nombre_medico}}</td>
