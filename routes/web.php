@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UsuarioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,7 +18,6 @@ Route::get('/', function () {
 });
 
 Auth::routes();
-Route::post('/logueo', [AuthController::class, 'login']);
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/noticias', [App\Http\Controllers\NoticiasController::class, 'noticias'])->name('noticias')->middleware('auth');
@@ -43,26 +40,4 @@ Route::get('/clear-cache', function () {
     echo Artisan::call('cache:clear');
     echo Artisan::call('route:clear');
  });
- Route::post('/logueo', [AuthController::class, 'login']);
- Route::get('/obtener_noticias', [App\Http\Controllers\NoticiasController::class, 'index']);
- Route::get('/medicoEspecialidad/{id_especialidad}/{id_centroMedico}', [App\Http\Controllers\MedicosController::class, 'medicoEspecialidad']);
- Route::get('/horario_disponible/{id_medico}', [App\Http\Controllers\HorariosController::class, 'horario_disponible']);
- Route::post('/registro', [App\Http\Controllers\UsuarioController::class, 'store'])->name('registro');
- Route::get('/obtener_tarjeta/{identificacion}', [App\Http\Controllers\GestionPagoController::class, 'obtener_tarjeta']);
-//Rutas de Historial
-Route::get('/historial/{id}', [App\Http\Controllers\CitasController::class, 'historial'])->name('historial');
-Route::get('/obetener_token_pago', [App\Http\Controllers\GestionPagoController::class, 'index']);
-Route::get('/email_cita/{id_especialidad}/{id_medico}/{id_horario}/{id_detalleCentroMed}/{id_usuario}', [App\Http\Controllers\CitasController::class, 'email_cita_ios'])->name('email_cita');
-
-
-    //Rutas a las que se permitirá acceso
-    //Ruta Citas
-    Route::get('/borrarHorario/{id_horario}', [App\Http\Controllers\HorariosController::class, 'destroy'])->name('borrarHorario');
-
-Route::get('/crearCita/{id_especialidad}/{id_horario}/{id_medico}/{id_usuario}', [App\Http\Controllers\CitasController::class, 'crearCita'])->name('crearCita');
-    //Rutas de EmailCitas
-//Rutas de EmailComprobante
-Route::get('/email_comprobante/{id_especialidad}/{id_usuario}/{id_horario}/{id_medico}/{identificacion}/{id_detalleCentroMed}/{autorizacion}', [App\Http\Controllers\CitasController::class, 'email_comprobante_ios'])->name('email_comprobante_ios');
-Route::post('/calificacion_app', [App\Http\Controllers\CalificacionAppController::class, 'store'])->name('calificacion_app');
-Route::post('/update_usuario', [App\Http\Controllers\UsuarioController::class, 'update_perfil'])->name('update_usuario_ios');
 

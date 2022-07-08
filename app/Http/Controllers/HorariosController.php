@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Horas;
 use App\Models\Citas;
-use Illuminate\Support\Facades\Cache;
 
 
 
@@ -20,29 +19,13 @@ class HorariosController extends Controller
      */
     public function index()
     {
-        if (Cache::has('horarios')) {
-            $horarios = Cache::get('horarios');
-        } else {
         $horarios = DB::select('SELECT *from v_horarios where estado = :estado', ['estado' => 'true']);
-        Cache::put('horarios', $horarios);
-        }
         return $horarios;
 
     }
     public function obtener_horario()
     {
-        if (Cache::has('horarios_all')) {
-            $horarios = Cache::get('horarios_all');
-        } else {
         $horarios= DB::select('select * from v_horarios');
-        Cache::put('horarios_all', $horarios);
-        }
-        return response()->json(["data"=>$horarios],200);
-    }
-    public function horario_disponible($id_medico)
-    {
-        $query='select * from v_horarios where id_medico='.$id_medico;
-        $horarios= DB::select($query);
         return response()->json($horarios, 200);
     }
 
@@ -77,9 +60,6 @@ class HorariosController extends Controller
             $horario->id_medico = $request->input('id_medico');
             $horario->estado = 'true';
             $horario->save();
-            Cache::forget('horarios');
-            Cache::forget('horarios_all');
-
             return redirect('horarios');
         } else {
             return back()->withInput($request->all());
@@ -133,9 +113,6 @@ class HorariosController extends Controller
                 ->update(
                     ['fecha' => $horario->fecha, 'id_hora' => $horario->id_hora, 'id_medico' => $horario->id_medico]
                 );
-                Cache::forget('horarios');
-                Cache::forget('horarios_all');
-
             return redirect('horarios');
         } else {
             return back()->withInput($request->all());
@@ -150,13 +127,10 @@ class HorariosController extends Controller
      */
     public function destroy($id)
     {
-        $horario = Horarios::where('id_horario',$id)->firstOrFail();
+        $horario = Horarios::find($id)->firstOrFail();
         $cita=Citas::where('id_horario',$id)->get();
         if(count($cita)==0){
             $horario->delete();
-            Cache::forget('horarios');
-            Cache::forget('horarios_all');
-
         }
         else{
             $horario->estado = 'false';
@@ -165,8 +139,6 @@ class HorariosController extends Controller
                 ->update(
                     ['estado' => $horario->estado]
                 );
-                Cache::forget('horarios');
-                Cache::forget('horarios_all');
         }
         return response()->json([
             'mensaje' => "Horario Eliminada"
@@ -203,9 +175,6 @@ class HorariosController extends Controller
         }
         foreach ($archivos as &$valor) {
             $this->guardar_turno($valor,$request->id_medico);
-            Cache::forget('horarios');
-            Cache::forget('horarios_all');
-
         }
 
         return response()->json([
@@ -232,10 +201,6 @@ class HorariosController extends Controller
             $horario->id_medico = $id_medico;
             $horario->estado = 'true';
             $horario->save();
-            Cache::forget('horarios');
-            Cache::forget('horarios_all');
-
-
     }
     public function busqueda_horario($data){
         $horario = Horas::where('hora',$data)->first();
@@ -245,7 +210,7 @@ class HorariosController extends Controller
     public function __construct()
     {
         //['index','noticias']
-        $this->middleware('auth:sanctum')->except(['index','horarios','carga_masiva','horario_disponible']);
+        $this->middleware('auth:sanctum')->except(['index','horarios','carga_masiva']);
     }
 
 }

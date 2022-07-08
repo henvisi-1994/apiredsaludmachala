@@ -60,7 +60,6 @@ class DetalleCentroMedicoController extends Controller
             $detalle_centro_medico->id_centroMedico = $request->input('id_centroMedico');
             $detalle_centro_medico->id_especialidad = $request->input('id_especialidad');
             $detalle_centro_medico->save();
-            Cache::forget('detalle_centro_medico');
             return;
         } else {
             return back()->withInput($request->all());
@@ -112,8 +111,6 @@ class DetalleCentroMedicoController extends Controller
                 ->update(
                     ['id_centroMedico' => $detalle_centro_medico->id_centroMedico, 'id_especialidad' => $detalle_centro_medico->id_especialidad]
                 );
-                Cache::forget('detalle_centro_medico');
-
             return;
         } else {
             return back()->withInput($request->all());
@@ -130,8 +127,6 @@ class DetalleCentroMedicoController extends Controller
     {
         $detalle_centro_medico = DetalleCentrosMedicos::find($id);
         $detalle_centro_medico->delete();
-        Cache::forget('detalle_centro_medico');
-
         //
     }
     public function detalle_centros_medicos()
