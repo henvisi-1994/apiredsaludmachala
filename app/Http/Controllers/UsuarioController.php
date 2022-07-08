@@ -167,7 +167,6 @@ class UsuarioController extends Controller
         // if ($v) {
         $id = $request->input('id');
         $usuario = User::where('id', $id)->first();
-        $usuario = User::find($id)->firstOrFail();
         $usuario->name = $request->input('name');
         $usuario->email = $request->input('email');
         $usuario->telefono = $request->input('telefono');

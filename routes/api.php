@@ -23,6 +23,7 @@ Route::resource('noticias', 'NoticiasController');
 Route::post('/updatenoticia/{id}', [App\Http\Controllers\NoticiasController::class, 'update'])->name('updatenoticia');
 Route::post('/logueo', [AuthController::class, 'login']);
 Route::get('/all', [App\Http\Controllers\NoticiasController::class, 'all']);
+
 //Rutas de Centros Medicos
 Route::resource('centros_medicos', 'CentrosMedicosController');
 Route::get('/obtener_centros_medicos', [App\Http\Controllers\CentrosMedicosController::class, 'obtener_centros_medicos']);

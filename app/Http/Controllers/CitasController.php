@@ -10,8 +10,14 @@ use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade as PDF;
 use Maatwebsite\Excel\Facades\Excel;
 use  App\Imports\CsvImport;
+use App\Models\CentrosMedicos;
+use App\Models\DetalleCentrosMedicos;
+use App\Models\Especialidades;
 use App\Models\Horarios;
 use App\Models\Horas;
+use App\Models\Medicos;
+use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 
 class CitasController extends Controller
 {
@@ -22,12 +28,26 @@ class CitasController extends Controller
      */
     public function index()
     {
+        if (Cache::has('citas')) {
+            $citas = Cache::get('citas');
+        } else {
         $citas = DB::select('select * from v_citas');
+        Cache::put('citas', $citas);
+        }
         return $citas;
     }
+
+
+
     public function obtener_citas()
     {
+        if (Cache::has('citas_all')) {
+            $citas = Cache::get('citas_all');
+        } else {
         $citas = DB::select('select * from v_citas');
+        Cache::put('citas_all', $citas);
+
+        }
         return $citas;
     }
 
@@ -50,11 +70,11 @@ class CitasController extends Controller
     public function store(Request $request)
     {
         $carbon = new \Carbon\Carbon();
-        $v = $this->validate(request(), [
+        /*$v = $this->validate(request(), [
             'id_especialidad' => 'required',
             'id_horario' => 'required',
             'id_medico' => 'required',
-        ]);
+        ]);*/
         //if ($v) {
 
         $cita = new Citas();
@@ -65,6 +85,9 @@ class CitasController extends Controller
         $cita->id_usuario = $request->input('id_usuario');
 
         $cita->save();
+        Cache::forget('citas');
+        Cache::forget('citas_all');
+
         return $cita;
         /*return response()->json([
                 'mensaje' => "Cita Confirmada"
@@ -72,6 +95,44 @@ class CitasController extends Controller
         //} else {
         //     return back()->withInput($request->all());
         // }
+    }
+    public function email_cita_ios($id_especialidad,$id_medico,$id_horario,
+    $id_detalleCentroMed,
+    $id_usuario)
+    {
+        $especialidad=Especialidades::where('id_especialidad',$id_especialidad)->get()[0];
+        $medico=Medicos::where('id_medico',$id_medico)->get()[0];
+        $horario=Horarios::where('id_horario',$id_horario)->get()[0];
+        $detalle=DetalleCentrosMedicos::where('id_detalleCentroMed',$id_detalleCentroMed)->get()[0];
+        $usuario=User::where('id',$id_usuario)->get()[0];
+        $centro_medico=CentrosMedicos::where('id_centroMedico',$detalle->id_centroMedico)->get()[0];
+
+        $email = DB::select('select email from citas inner join medicos on citas.id_medico=medicos.id_medico inner join detalle_centros_medicos on
+            medicos."id_detalleCentroMed"=detalle_centros_medicos."id_detalleCentroMed" inner join centros_medicos on
+            detalle_centros_medicos."id_centroMedico"=centros_medicos."id_centroMedico" where citas.id_medico = :id', ['id' => $id_medico])[0]->email;
+        $especialidad = $especialidad->nombre_especialidad;
+        $nomb_centro_medico = $centro_medico->nombre_centroMedico;
+        $nomb_medico = $medico->nombre_medico;
+        $fecha = DB::select('SELECT fecha FROM v_citas where id_medico = :id', ['id' => $id_medico])[0]->fecha;
+        $date = Carbon::parse($fecha);
+        $date = $date->format('d/m/Y');
+        $hora = DB::select('SELECT hora FROM v_citas where id_medico = :id', ['id' => $id_medico])[0]->hora;
+        $formato_hora = explode("-", $hora);
+        $nomb_usuario = $usuario->name;
+        $credenciales = [
+            'email' => $email,
+            'username' =>  $nomb_usuario,
+            'especialidad' => $especialidad,
+            'nomb_centro_medico' => $nomb_centro_medico,
+            'nomb_medico' => $nomb_medico,
+            'fecha' => $date,
+            'hora' => $formato_hora[0]
+        ];
+        Mail::send('email', $credenciales, function ($msj) use ($email, $nomb_usuario) {
+            $msj->to($email, $nomb_usuario);
+            $msj->subject('Agenda de Cita Medica');
+        });
+        return $credenciales;
     }
     public function email_cita(Request $request)
     {
@@ -145,6 +206,62 @@ class CitasController extends Controller
         });
         return $credenciales;
     }
+    public function email_comprobante_ios($id_especialidad,
+    $id_usuario,
+    $id_horario,
+    $id_medico,
+    $identificacion,$id_detalleCentroMed,$autorizacion)
+    {
+
+        $especialidad_db=Especialidades::where('id_especialidad',$id_especialidad)->get()[0];
+        $medico=Medicos::where('id_medico',$id_medico)->get()[0];
+        $horario=Horarios::where('id_horario',$id_horario)->get()[0];
+        $usuario=User::where('id',$id_usuario)->get()[0];
+        $hora_db=Horas::where('id_hora',$horario->id_hora)->get()[0];
+        $detalle=DetalleCentrosMedicos::where('id_detalleCentroMed',$id_detalleCentroMed)->get()[0];
+        $centro_medico=CentrosMedicos::where('id_centroMedico',$detalle->id_centroMedico)->get()[0];
+        $email = $usuario->email;
+        $especialidad = $especialidad_db->nombre_especialidad;
+        $nomb_medico = $medico->nombre_medico;
+        $fecha = Carbon::now();
+        $date = Carbon::parse($fecha);
+        $date = $date->format('d/m/Y');
+        $cedula = $usuario->identificacion;
+        $nomb_usuario = $usuario->name;
+        $num_comprobante = $identificacion;
+        $precio = $especialidad_db->valor;
+        $hora = $hora_db->hora;
+        $auxhora = explode("-", $hora);
+        $nomb_centMedico = $centro_medico->nombre_centroMedico;
+        $fecha_cita = $horario->fecha;
+        $auxFecha = Carbon::parse($fecha_cita);
+        $num_autorizacion=$autorizacion;
+
+        $credenciales = [
+            'email' => $email,
+            'username' =>  $nomb_usuario,
+            'especialidad' => $especialidad,
+            'nomb_medico' => $nomb_medico,
+            'fecha' => $date,
+            'identificacion' => $cedula,
+            'num_comprobante' => $num_comprobante,
+            'precio' => $precio,
+            'auxhora' => $auxhora[0],
+            'nomb_centMedico' => $nomb_centMedico,
+            'auxFecha' => $auxFecha->format('d/m/Y'),
+            'autorizacion'=>$num_autorizacion
+        ];
+        $nombre_archivo=$num_comprobante.'.pdf';
+        $pdf = PDF::loadView('comprobante_pdf', $credenciales);
+        $pdf->setPaper('a4', 'portrait');
+        /*->save(storage_path('app/public/comprobante/') . $nombre_archivo);*/
+        Mail::send('comprobante', $credenciales, function ($msj) use ($email, $nomb_usuario,$pdf,$nombre_archivo) {
+            $msj->to($email, $nomb_usuario);
+            $msj->subject('Comprobante de Cita Medica');
+            $msj->attachData($pdf->output(),$nombre_archivo);
+        });
+        return $credenciales;
+    }
 
     /**
      * Display the specified resource.
@@ -193,6 +310,8 @@ class CitasController extends Controller
                 ->update(
                     ['id_especialidad' => $cita->id_especialidad, 'id_horario' => $cita->id_horario, 'id_medico' => $cita->id_medico]
                 );
+                Cache::forget('citas');
+                Cache::forget('citas_all');
             return redirect('citas');
         } else {
             return back()->withInput($request->all());
@@ -209,6 +328,9 @@ class CitasController extends Controller
     {
         $citas = Citas::find($id);
         $citas->delete();
+        Cache::forget('citas');
+        Cache::forget('citas_all');
+
         //
     }
     public function citas()
@@ -220,11 +342,25 @@ class CitasController extends Controller
         $historial = DB::select('SELECT * FROM v_citas where id_usuario = :id', ['id' => $id]);
         return $historial;
     }
+    public function crearCita($id_especialidad,$id_horario,$id_medico,$id_usuario){
+        $carbon = new \Carbon\Carbon();
+        $cita = new Citas();
+        $cita->id_especialidad = $id_especialidad;
+        $cita->id_horario = $id_horario;
+        $cita->id_medico = $id_medico;
+        //$cita->nomb_usuario = $request->input('nomb_usuario');
+        $cita->id_usuario = $id_usuario;
+        $cita->save();
+        Cache::forget('citas');
+        Cache::forget('citas_all');
+
+        return $cita;
+    }
 
     public function __construct()
     {
         //['index','noticias']
-        $this->middleware('auth:sanctum')->except(['index', 'citas','carga_masiva']);
+        $this->middleware('auth:sanctum')->except(['index', 'citas','carga_masiva','historial','store','email_cita_ios','email_comprobante_ios']);
     }
 
 }

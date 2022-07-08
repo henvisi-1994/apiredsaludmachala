@@ -21,6 +21,12 @@ class MedicosController extends Controller
         return $medicos;
 
     }
+    public function medicoEspecialidad($id_especialidad,$id_centroMedico)
+    {
+        $query='select * from v_medicos where id_especialidad='.$id_especialidad.' and "id_centroMedico"='.$id_centroMedico;
+        $medicos= DB::select($query);
+        return $medicos;
+    }
     public function obtener_medicos()
     {
         $medicos= DB::select('select * from v_medicos');
@@ -135,7 +141,7 @@ class MedicosController extends Controller
     public function __construct()
     {
         //['index','noticias']
-        $this->middleware('auth:sanctum')->except(['index','medicos']);
+        $this->middleware('auth:sanctum')->except(['index','medicos','medicoEspecialidad']);
     }
 
 }

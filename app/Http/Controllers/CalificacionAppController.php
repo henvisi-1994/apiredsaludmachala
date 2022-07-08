@@ -20,14 +20,15 @@ class CalificacionAppController extends Controller
                 $calificacion_app->save();
                 return $calificacion_app;
             }else{
-                $califica = CalificacionApp::find($id)->firstOrFail();
+                $califica = CalificacionApp::where('id_cita',$id)->first();
                 $califica->calificacion = $request->input('calificacion');
                 $califica->comentario = $request->input('comentario');
-                DB::table('calificacion')
+                $califica->save();
+               /* DB::table('calificacion')
                 ->where('id_calificacion', $id)
                 ->update(
                     ['calificacion' => $califica->calificacion, 'comentario' => $califica->comentario]
-                );
+                );*/
                 return $calificacion_app;
             }
     }

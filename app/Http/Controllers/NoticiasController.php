@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Noticias;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
 
 
 
@@ -17,14 +19,25 @@ class NoticiasController extends Controller
      */
     public function index()
     {
+        if (Cache::has('noticias')) {
+            $noticias = Cache::get('noticias');
+        } else {
         $noticias = DB::select('select * from v_control_fecha');
+        Cache::put('noticias', $noticias);
+
+        }
         return $noticias;
 
     }
     public function all()
     {
-        $noticia = Noticias::all();
-        return response()->json($noticia, 200);
+        if (Cache::has('noticias_all')) {
+            $noticias = Cache::get('noticias_all');
+        } else {
+        $noticias = Noticias::all();
+        Cache::put('noticias_all', $noticias);
+        }
+        return response()->json($noticias, 200);
     }
 
     /**
@@ -56,7 +69,8 @@ class NoticiasController extends Controller
             list($type, $imageData) = explode(';', $request->imagen_noticia);
             list(, $extension) = explode('/', $type);
             list(, $imageData) = explode(',', $imageData);
-            $name = $request->titulo_noticia . '.' . $extension;
+            $unix_timestamp = Carbon::now()->timestamp; // Produces something like 1552296328
+            $name = $request->titulo_noticia . $unix_timestamp.'.' . $extension;
             $source = fopen($request->imagen_noticia, 'r');
             $destination = fopen(public_path() . '/img/noticia/' . $name, 'w');
             stream_copy_to_stream($source, $destination);
@@ -71,6 +85,9 @@ class NoticiasController extends Controller
             $noticia->fecha_inicio_noticia = $request->input('fecha_inicio_noticia');
             $noticia->fecha_fin_noticia = $request->input('fecha_fin_noticia');
             $noticia->save();
+            Cache::forget('noticias');
+            Cache::forget('noticias_all');
+
             return redirect('noticias');
         } else {
             return back()->withInput($request->all());
@@ -146,6 +163,9 @@ class NoticiasController extends Controller
                 ->update(
                     ['titulo_noticia' => $noticia->titulo_noticia, 'imagen_noticia' => $noticia->imagen_noticia, 'descripcion_noticia' => $noticia->descripcion_noticia, 'fecha_inicio_noticia' => $noticia->fecha_inicio_noticia, 'fecha_fin_noticia' => $noticia->fecha_fin_noticia]
                 );
+                Cache::forget('noticias');
+                Cache::forget('noticias_all');
+
             return redirect('noticias');
         } else {
             return back()->withInput($request->all());
@@ -162,6 +182,9 @@ class NoticiasController extends Controller
     {
         $noticia = Noticias::find($id);
         $noticia->delete();
+        Cache::forget('noticias');
+        Cache::forget('noticias_all');
+
         //
     }
     public function noticias()
