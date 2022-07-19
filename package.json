@@ -25,6 +25,11 @@
         "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
-        "bootstrap-vue": "^2.21.2"
+        "bootstrap-vue": "^2.21.2",
+        "datatables.net-bs4": "^1.12.1",
+        "datatables.net-buttons-bs4": "^2.2.3",
+        "jszip": "^3.10.0",
+        "laravel-vue-pagination": "^3.0.0",
+        "pdfmake": "^0.2.5"
     }
 }

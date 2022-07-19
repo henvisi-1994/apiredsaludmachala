@@ -62,6 +62,12 @@ class MedicosController extends Controller
             return back()->withInput($request->all());
         }
     }
+    public function medicoEspecialidad($id_especialidad,$id_centroMedico)
+    {
+        $query='select * from v_medicos where id_especialidad='.$id_especialidad.' and "id_centroMedico"='.$id_centroMedico;
+        $medicos= DB::select($query);
+        return $medicos;
+    }
 
     /**
      * Display the specified resource.

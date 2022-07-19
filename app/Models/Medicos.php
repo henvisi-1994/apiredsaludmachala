@@ -15,4 +15,8 @@ class Medicos extends Model
         'id_detalleCentroMed',
 
     ];
+    public function detalle()
+    {
+        return $this->hasOne(DetalleCentrosMedicos::class, 'id_detalleCentroMed', 'id_detalleCentroMed')->with('centro_medico','especialidad');
+    }
 }

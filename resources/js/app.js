@@ -15,8 +15,7 @@ document.write('<script src="vendor/toastr/js/toastr.js"></script>');
 require("./bootstrap");
 import JQuery from "jquery";
 import { filter } from "lodash";
-let $ = JQuery;
-require('datatables.net-bs4')();
+var $ = JQuery;
 
 window.Vue = require("vue").default;
 import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
@@ -61,6 +60,7 @@ const app = new Vue({
 
     },
     data: {
+        url: "http://apiredsaludmachala.net/",
         search: "",
         change_password: {
             password_old: "",
@@ -92,6 +92,8 @@ const app = new Vue({
         medicos_prod: [],
         horas: [],
         horarios: [],
+        links: [],
+        links_user: [],
         usuarios: [],
         edit_centro_medico: false,
         edit_especialidad: false,
@@ -151,7 +153,6 @@ const app = new Vue({
 
     methods: {
         tabla() {
-            console.log('Entro a Tabla');
             this.$nextTick(() => {
                 $('#turnos').DataTable();
             })
@@ -212,7 +213,7 @@ const app = new Vue({
                     }
 
                     toastr.success("Se añadido una nueva Noticia");
-                    window.locationf = "http://apiredsaludmachala.net/noticias";
+                    window.locationf = this.url + "noticias";
                 })
                 .catch(error => {
                     toastr.error("Por favor rellene los campos");
@@ -419,7 +420,7 @@ const app = new Vue({
 
                     toastr.success("Se añadido un nuevo Centro Medico");
                     window.locationf =
-                        "http://apiredsaludmachala.net/centrosmedicos";
+                        this.url + "centrosmedicos";
                     $("#modal-asignarEspecialidad").modal("show");
                 })
                 .catch(error => {
@@ -438,7 +439,6 @@ const app = new Vue({
                         return e.id_especialidad;
                     })
                     .indexOf(this.detalleCentroMedico.id_especialidad);
-                console.log(aux);
                 if (aux == -1) {
                     axios
 
@@ -619,7 +619,7 @@ const app = new Vue({
 
                     toastr.success("Se ha añadido una Nueva Especialidad");
                     window.locationf =
-                        "http://apiredsaludmachala.net/especialidades";
+                        this.url + "especialidades";
                 })
                 .catch(error => {
                     toastr.error("Por favor rellene los campos");
@@ -795,7 +795,7 @@ const app = new Vue({
 
                         toastr.success("Se añadido un Nuevo Medico");
                         window.locationf =
-                            "http://apiredsaludmachala.net/medicos";
+                            this.url + "medicos";
                     })
                     .catch(error => {
                         toastr.error("Por favor rellene los campos");
@@ -921,7 +921,7 @@ const app = new Vue({
                     }
 
                     toastr.success("Se añadido un Nuevo Medico de Produccion");
-                    window.locationf = "http://apiredsaludmachala.net/medicos";
+                    window.locationf = this.url + "medicos";
                 })
                 .catch(error => {
                     this.errors = error.response.data;
@@ -1032,7 +1032,7 @@ const app = new Vue({
                     }
 
                     toastr.success("Se añadido una Hora");
-                    window.locationf = "http://apiredsaludmachala.net/horas";
+                    window.locationf = this.url + "horas";
                 })
                 .catch(error => {
                     toastr.error("Por favor rellene los campos");
@@ -1134,10 +1134,37 @@ const app = new Vue({
                     }
                 })
                 .then(response => {
-                    this.horarios = response.data;
-                    this.tabla();
+                    this.links = response.data.links;
+                    this.horarios = response.data.data;
                 });
         },
+        paginar_horario(url) {
+            let token = localStorage.getItem("token");
+            axios
+                .get(url, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.links = response.data.links;
+                    this.horarios = response.data.data;
+                });
+        },
+        paginar_usuario(url) {
+            let token = localStorage.getItem("token");
+            axios
+                .get(url, {
+                    headers: {
+                        Authorization: "Bearer " + token //the token is a variable which holds the token
+                    }
+                })
+                .then(response => {
+                    this.links_user = response.data.links;
+                    this.usuarios = response.data.data;
+                });
+        },
+
         createHorario: function() {
             let urlGuardarHorario = "api/horarios";
             let token = localStorage.getItem("token");
@@ -1220,23 +1247,25 @@ const app = new Vue({
                 });
         },
         buscar: function() {
-            //element.name == this.search
-            if (!!this.search) {
-                return this.horarios.filter(item => {
-                    return (
-                            item.fecha +
-                            item.nombre_centroMedico +
-                            item.nombre_medico +
-                            item.estado +
-                            item.nombre_especialidad
-                        )
-                        .toLowerCase()
-                        .includes(this.search.toLowerCase());
-                });
+            let token = localStorage.getItem("token");
+            if (this.search.length != 0) {
+                let urlHorarios = "api/buscar_horario/" + this.search;
+                axios
+                    .get(urlHorarios, {
+                        headers: {
+                            Authorization: "Bearer " + token //the token is a variable which holds the token
+                        }
+                    })
+                    .then(response => {
+                        this.links = response.data.links;
+                        this.horarios = response.data.data;
+                    });
             } else {
-                return this.horarios;
+                this.getHorarios();
             }
+
         },
+
         habilitar_horarios(id) {
             let urlHabilitarHorarios = "api/habilitar_horarios/" + id;
             let token = localStorage.getItem("token");
@@ -1269,7 +1298,7 @@ const app = new Vue({
             axios
                 .post("/login", this.user)
                 .then(response => {
-                    window.location.href = "http://apiredsaludmachala.net/home";
+                    window.location.href = this.url + "home";
                 })
                 .catch(response => {
                     // List errors on response...
@@ -1331,7 +1360,6 @@ const app = new Vue({
                         this.errors = error.response.data;
                     });
             } else {
-                console.log(url);
 
                 toastr.error("Su contraseña no coincide, Revisar");
             }
@@ -1420,25 +1448,28 @@ const app = new Vue({
                     }
                 })
                 .then(response => {
-                    this.usuarios = response.data;
+                    this.usuarios = response.data.data;
+                    this.links_user = response.data.links;
                 });
         },
         buscar_usuario: function() {
             //element.name == this.search
             if (!!this.search_usuario) {
-                return this.usuarios.filter(item => {
-                    return (
-                            item.name +
-                            item.email +
-                            item.telefono +
-                            item.identificacion +
-                            item.direccion
-                        )
-                        .toLowerCase()
-                        .includes(this.search_usuario.toLowerCase());
-                });
+                let urlUsuarios = "api/buscar_usuario/" + this.search_usuario;
+                let token = localStorage.getItem("token");
+
+                axios
+                    .get(urlUsuarios, {
+                        headers: {
+                            Authorization: "Bearer " + token //the token is a variable which holds the token
+                        }
+                    })
+                    .then(response => {
+                        this.usuarios = response.data.data;
+                        this.links_user = response.data.links;
+                    });
             } else {
-                return this.usuarios;
+                this.getUsuarios();
             }
         },
         deleteUsuario: function(id) {

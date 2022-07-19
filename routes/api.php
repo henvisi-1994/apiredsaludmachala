@@ -40,6 +40,7 @@ Route::post('/updatehoras/{id}', [App\Http\Controllers\HorasController::class, '
 //Rutas de Horarios
 Route::resource('horarios', 'HorariosController');
 Route::get('/obtener_horario', [App\Http\Controllers\HorariosController::class, 'obtener_horario']);
+Route::get('/buscar_horario/{busqueda}', [App\Http\Controllers\HorariosController::class, 'buscar_horario']);
 Route::post('/updatehorario/{id}', [App\Http\Controllers\HorariosController::class, 'update'])->name('updatehorario');
 Route::get('/habilitar_horarios/{id}', [App\Http\Controllers\HorariosController::class, 'habilitar_horarios'])->name('habilitar_horarios');
 //Rutas de Medicos
@@ -59,6 +60,7 @@ Route::post('/update_detalle_centro_medicos/{id}', [App\Http\Controllers\Detalle
 //Rutas de Registro
 Route::resource('usuario', 'UsuarioController');
 Route::get('/obtener_usuario', [App\Http\Controllers\UsuarioController::class, 'obtener_usuario']);
+Route::get('/buscar_usuario/{busqueda}', [App\Http\Controllers\UsuarioController::class, 'buscar_usuario']);
 Route::post('/update_usuario', [App\Http\Controllers\UsuarioController::class, 'update_perfil'])->name('update_usuario');
 //Rutas de Citas
 Route::resource('citas', 'CitasController');

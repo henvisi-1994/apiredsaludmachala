@@ -25,7 +25,14 @@ class UsuarioController extends Controller
     }
     public function obtener_usuario()
     {
-        $usuario = User::all();
+        $usuario = User::paginate(5);
+        return response()->json($usuario, 200);
+    }
+    public function buscar_usuario($busqueda){
+
+        $usuario = User::where('name','like', '%' . $busqueda. '%')->orWhere('email','like', '%' . $busqueda. '%')->orWhere('telefono','like', '%' . $busqueda. '%')
+        ->orWhere('identificacion',$busqueda)
+        ->orWhere('direccion','like', '%' . $busqueda. '%')->paginate(10);
         return response()->json($usuario, 200);
     }
 
