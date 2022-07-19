@@ -43,6 +43,8 @@ Route::get('/clear-cache', function () {
  Route::get('/email_comprobante/{id_especialidad}/{id_usuario}/{id_horario}/{id_medico}/{identificacion}/{id_detalleCentroMed}/{autorizacion}', [App\Http\Controllers\CitasController::class, 'email_comprobante_ios'])->name('email_comprobante_ios');
  Route::get('/email_cita/{id_especialidad}/{id_medico}/{id_horario}/{id_detalleCentroMed}/{id_usuario}', [App\Http\Controllers\CitasController::class, 'email_cita_ios'])->name('email_cita');
  Route::get('/crearCita/{id_especialidad}/{id_horario}/{id_medico}/{id_usuario}', [App\Http\Controllers\CitasController::class, 'crearCita'])->name('crearCita');
- Route::get('/medicoEspecialidad/{id_especialidad}/{id_centroMedico}', [App\Http\Controllers\MedicosController::class, 'medicoEspecialidad']);
+ Route::get('/medicoEspecialidad/{id_especialidad}/{id_centroMedico}', [App\Http\Controllers\MedicosController::class, 'medicoEspecialidad'])->name('medicoEspecialidad');
+ Route::get('/obtener_timestamp', [App\Http\Controllers\GestionPagoController::class, 'obtener_timestamp'])->name('obtener_timestamp');
+ Route::get('/obtenerTokenCliente', [App\Http\Controllers\GestionPagoController::class, 'obtenerTokenCliente'])->name('obtenerTokenCliente');
 
 
