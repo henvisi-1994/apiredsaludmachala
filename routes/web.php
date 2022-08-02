@@ -46,5 +46,9 @@ Route::get('/clear-cache', function () {
  Route::get('/medicoEspecialidad/{id_especialidad}/{id_centroMedico}', [App\Http\Controllers\MedicosController::class, 'medicoEspecialidad'])->name('medicoEspecialidad');
  Route::get('/obtener_timestamp', [App\Http\Controllers\GestionPagoController::class, 'obtener_timestamp'])->name('obtener_timestamp');
  Route::get('/obtenerTokenCliente', [App\Http\Controllers\GestionPagoController::class, 'obtenerTokenCliente'])->name('obtenerTokenCliente');
-
+ Route::get('/borrarHorario/{id}', [App\Http\Controllers\HorariosController::class, 'destroy'])->name('borrarHorario');
+ Route::get('/historial/{id}', [App\Http\Controllers\CitasController::class, 'historial'])->name('historial');
+ Route::post('/calificacion_app', [App\Http\Controllers\CalificacionAppController::class, 'store'])->name('calificacion_app');
+ Route::post('/registro', [App\Http\Controllers\UsuarioController::class, 'store'])->name('registro');
+ Route::post('/update_usuario', [App\Http\Controllers\UsuarioController::class, 'update_perfil'])->name('update_usuario');
 

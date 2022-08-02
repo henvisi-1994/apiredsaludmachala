@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 
 
@@ -75,6 +76,16 @@ class UsuarioController extends Controller
             $usuario->direccion = $request->input('direccion');
             $usuario->password = Hash::make($request->input('password'));
             $usuario->save();
+            $email=$usuario->email;
+            $username=$usuario->name;
+            $credenciales = [
+                'email' => $email,
+                'username' =>  $username,
+            ];
+            Mail::send('emailregistro', $credenciales, function ($msj) use ($email, $username) {
+                $msj->to($email, $username);
+                $msj->subject('Registro en Aplicacion Movil de Red de Salud Machala E.P');
+            });
             return response()->json($usuario, 200);
         }
 

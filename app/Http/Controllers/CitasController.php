@@ -217,9 +217,7 @@ class CitasController extends Controller
         $usuario=User::where('id',$id_usuario)->get()[0];
         $centro_medico=CentrosMedicos::where('id_centroMedico',$detalle->id_centroMedico)->get()[0];
 
-        $email = DB::select('select email from citas inner join medicos on citas.id_medico=medicos.id_medico inner join detalle_centros_medicos on
-            medicos."id_detalleCentroMed"=detalle_centros_medicos."id_detalleCentroMed" inner join centros_medicos on
-            detalle_centros_medicos."id_centroMedico"=centros_medicos."id_centroMedico" where citas.id_medico = :id', ['id' => $id_medico])[0]->email;
+        $email = $centro_medico->email;
         $especialidad = $especialidad->nombre_especialidad;
         $nomb_centro_medico = $centro_medico->nombre_centroMedico;
         $nomb_medico = $medico->nombre_medico;
