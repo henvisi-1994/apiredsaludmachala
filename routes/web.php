@@ -51,4 +51,6 @@ Route::get('/clear-cache', function () {
  Route::post('/calificacion_app', [App\Http\Controllers\CalificacionAppController::class, 'store'])->name('calificacion_app');
  Route::post('/registro', [App\Http\Controllers\UsuarioController::class, 'store'])->name('registro');
  Route::post('/update_usuario', [App\Http\Controllers\UsuarioController::class, 'update_perfil'])->name('update_usuario');
+ Route::get('/especialidades_med_prod', [App\Http\Controllers\EspecialidadesController::class, 'obtener_especialidades_med_prod'])->name('especialidades_med_prod');
+ Route::get('/especialidades_med_prod2', [App\Http\Controllers\EspecialidadesController::class, 'obtener_especialidades_med_prod2']);
 
