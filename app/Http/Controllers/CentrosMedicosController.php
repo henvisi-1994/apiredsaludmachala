@@ -26,6 +26,11 @@ class CentrosMedicosController extends Controller
         $centros_medicos = CentrosMedicos::all();
         return response()->json($centros_medicos, 200);
     }
+    public function obtener_centro_medico($id)
+    {
+        $centros_medicos = CentrosMedicos::where('id_centroMedico',$id)->first();
+        return response()->json($centros_medicos, 200);
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -144,7 +149,7 @@ class CentrosMedicosController extends Controller
     public function __construct()
     {
         //['index','noticias']
-        $this->middleware('auth:sanctum')->except(['index','centrosmedicos']);
+        $this->middleware('auth:sanctum')->except(['index','centrosmedicos','obtener_centro_medico']);
     }
 
 }

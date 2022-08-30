@@ -64,9 +64,9 @@ class UsuarioController extends Controller
             'password' => ['required', 'string', 'min:8'],
         ]);*/
         // if ($v) {
-        $usuario = User::where('email', $request->input('email'))->first();
+        $usuario = User::where('email', $request->input('email'))->orWhere('identificacion', $request->input('identificacion'))->first();
         if ($usuario) {
-            return response()->json(['Mensaje' => 'Email Repetido'], 400);
+            return response()->json(['Mensaje' => 'Email o Cédula Repetido'], 400);
         } else {
             $usuario = new User();
             $usuario->name = $request->input('name');
@@ -94,6 +94,32 @@ class UsuarioController extends Controller
         /* else{
                 return response()->json("Error al Guardar Registro", 400);
             }*/
+    }
+    public function validar_datos(Request $request){
+        /*$v = $this->validate(request(), [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'telefono' => ['required', 'string', 'max:10','min:9'],
+            'identificacion' => ['required', 'string', 'max:13','min:10'],
+            'direccion' => ['required', 'string', 'max:255'],
+            'password' => ['required', 'string', 'min:8'],
+        ]);*/
+
+         //if ($v) {
+            $usuario = User::where('email', $request->input('email'))->orWhere('identificacion', $request->input('identificacion'))->first();
+            if ($usuario) {
+                return response()->json(['mensaje' => 'Email o Cédula Repetido'], 40);
+            }
+            else{
+                return response()->json(['mensaje' => 'Registro Correcto'], 200);
+
+            }
+
+         //}
+              /*else{
+                return response()->json(['mensaje'=>'Error al Guardar Registro'], 400);
+            }*/
+
     }
 
     /**
@@ -243,6 +269,6 @@ class UsuarioController extends Controller
     public function __construct()
     {
         //['index','noticias']
-        $this->middleware('auth:sanctum')->except(['index', 'store', 'update_perfil']);
+        $this->middleware('auth:sanctum')->except(['index', 'store', 'update_perfil','validar_datos']);
     }
 }

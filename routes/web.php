@@ -22,6 +22,7 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/noticias', [App\Http\Controllers\NoticiasController::class, 'noticias'])->name('noticias')->middleware('auth');
 Route::get('/centrosmedicos', [App\Http\Controllers\CentrosMedicosController::class, 'centros_medicos'])->name('centrosmedicos')->middleware('auth');
+
 Route::get('/especialidades', [App\Http\Controllers\EspecialidadesController::class, 'especialidades'])->name('especialidades')->middleware('auth');
 Route::get('/horas', [App\Http\Controllers\HorasController::class, 'horas'])->name('horas')->middleware('auth');
 Route::get('/horarios', [App\Http\Controllers\HorariosController::class, 'horarios'])->name('horarios')->middleware('auth');
@@ -53,4 +54,7 @@ Route::get('/clear-cache', function () {
  Route::post('/update_usuario', [App\Http\Controllers\UsuarioController::class, 'update_perfil'])->name('update_usuario');
  Route::get('/especialidades_med_prod', [App\Http\Controllers\EspecialidadesController::class, 'obtener_especialidades_med_prod'])->name('especialidades_med_prod');
  Route::get('/especialidades_med_prod2', [App\Http\Controllers\EspecialidadesController::class, 'obtener_especialidades_med_prod2']);
+ Route::get('/infocentromedico/{id}', [App\Http\Controllers\CentrosMedicosController::class, 'obtener_centro_medico']);
+ Route::get('/obtener_especialidad/{id_especialidad}', [App\Http\Controllers\EspecialidadesController::class, 'obtener_especialidad'])->name('obtener_especialidad');
+ Route::get('/obtenerCentroMedico/{id_detalleCentroMed}', [App\Http\Controllers\DetalleCentroMedicoController::class, 'obtenerCentroMedico'])->name('obtenerCentroMedico');
 

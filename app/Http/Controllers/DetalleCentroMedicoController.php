@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CentrosMedicos;
 use App\Models\DetalleCentrosMedicos;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -25,6 +26,13 @@ class DetalleCentroMedicoController extends Controller
             Cache::put('detalle_centro_medico', $detalle_centro_medico);
         }
         return $detalle_centro_medico;
+    }
+    public function obtenerCentroMedico($id_detalleCentroMed)
+    {
+
+            $detalle_centro_medico = DetalleCentrosMedicos::where('id_detalleCentroMed',$id_detalleCentroMed)->first();
+
+            return $detalle_centro_medico;
     }
     public function obtener_detalle_centro_medicos()
     {
@@ -136,6 +144,6 @@ class DetalleCentroMedicoController extends Controller
     public function __construct()
     {
         //['index','noticias']
-        $this->middleware('auth:sanctum')->except(['index', 'detallecentrosmedicos']);
+        $this->middleware('auth:sanctum')->except(['index', 'detallecentrosmedicos','obtenerCentroMedico']);
     }
 }

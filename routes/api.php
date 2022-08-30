@@ -59,6 +59,7 @@ Route::post('/update_detalle_centro_medicos/{id}', [App\Http\Controllers\Detalle
 
 //Rutas de Registro
 Route::resource('usuario', 'UsuarioController');
+Route::post('/verificar_registro', [App\Http\Controllers\UsuarioController::class, 'validar_datos']);
 Route::get('/obtener_usuario', [App\Http\Controllers\UsuarioController::class, 'obtener_usuario']);
 Route::get('/buscar_usuario/{busqueda}', [App\Http\Controllers\UsuarioController::class, 'buscar_usuario']);
 Route::post('/update_usuario', [App\Http\Controllers\UsuarioController::class, 'update_perfil'])->name('update_usuario');
