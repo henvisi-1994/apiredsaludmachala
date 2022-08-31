@@ -29,34 +29,19 @@ class HorariosController extends Controller
         return response()->json($horarios, 200);
     }
     public function buscar_horario($busqueda){
-        $detalle=DetalleCentrosMedicos::join('centros_medicos', 'centros_medicos.id_centroMedico', '=', 'detalle_centros_medicos.id_centroMedico')
-        ->join('especialidades', 'detalle_centros_medicos.id_especialidad', '=', 'especialidades.id_especialidad')
-        ->where('nombre_centroMedico','like', '%' . $busqueda. '%')->orWhere('nombre_especialidad','like', '%' . $busqueda. '%')->first();
-
-        $medico=Medicos::join('detalle_centros_medicos','medicos.id_detalleCentroMed','=','detalle_centros_medicos.id_detalleCentroMed')
+        $horarios=Horarios::with('hora','medico')
+        ->join('horas','horarios.id_hora','=','horas.id_hora')
+        ->join('medicos','horarios.id_medico', '=','medicos.id_medico')
+        ->join('detalle_centros_medicos','medicos.id_detalleCentroMed','=','detalle_centros_medicos.id_detalleCentroMed')
         ->join('especialidades','detalle_centros_medicos.id_especialidad','=','especialidades.id_especialidad')
         ->join('centros_medicos','detalle_centros_medicos.id_centroMedico','=','centros_medicos.id_centroMedico')
-        ->where('nombre_medico', 'like', '%' . $busqueda. '%')->orWhere('nombre_especialidad','like', '%' . $busqueda. '%')
+        ->where('nombre_medico', 'like', '%' . $busqueda. '%')
+        ->orWhere('nombre_especialidad','like', '%' . $busqueda. '%')
         ->orWhere('nombre_centroMedico','like', '%' . $busqueda. '%')
-        ->first();
-
-        if($medico){
-        $horarios= Horarios::with('hora','medico')->where('estado','true')->where('id_medico',$medico->id_medico)->orderBy('fecha', 'DESC')->paginate(10);
-      }
-      else{
-        $hora=Horas::where('hora', 'like', '%' . $busqueda. '%')->first();
-        if($hora){
-            $horarios= Horarios::with('hora','medico')->where('estado','true')->where('id_hora',$hora->id_hora)->orderBy('fecha', 'DESC')->paginate(10);
-
-
-        }else{
-
-            $horarios= Horarios::with('hora','medico')->where('estado','true')->where('fecha',$busqueda)->orderBy('fecha', 'DESC')->paginate(10);
-
-        }
-
-      }
-        //$horarios= Horarios::with('hora','medico')->where('estado','true')->where('fecha',$busqueda)->orderBy('fecha', 'DESC')->paginate(10);
+        ->orWhere('hora','like', '%' . $busqueda. '%')
+        ->orWhere('fecha','like', '%' . $busqueda. '%')
+        ->orWhere('nombre_medico','like', '%' . $busqueda. '%')
+        ->orderBy('fecha', 'DESC')->paginate(10);
         return response()->json($horarios, 200);
     }
 
