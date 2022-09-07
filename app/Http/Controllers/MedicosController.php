@@ -152,7 +152,7 @@ class MedicosController extends Controller
     public function __construct()
     {
         //['index','noticias']
-        $this->middleware('auth:sanctum')->except(['index','medicos']);
+        $this->middleware('auth:sanctum')->except(['index','medicos','medicoEspecialidad']);
     }
 
 }
