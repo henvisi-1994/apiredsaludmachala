@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MedicoProduccion;
 use App\Models\Medicos;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -64,8 +65,18 @@ class MedicosController extends Controller
     }
     public function medicoEspecialidad($id_especialidad,$id_centroMedico)
     {
-        $query='select * from v_medicos where id_especialidad='.$id_especialidad.' and "id_centroMedico"='.$id_centroMedico;
-        $medicos= DB::select($query);
+        if($id_centroMedico ==0){
+
+            $medicos = MedicoProduccion::join('especialidades','medico_produccions.id_especialidad','=','especialidades.id_especialidad')
+            ->where('medico_produccions.id_especialidad', $id_especialidad)->get();
+        }else{
+            $medicos = Medicos::join('detalle_centros_medicos','medicos.id_detalleCentroMed','=','detalle_centros_medicos.id_detalleCentroMed')
+            ->join('especialidades','detalle_centros_medicos.id_especialidad','=','especialidades.id_especialidad')
+            ->join('centros_medicos','detalle_centros_medicos.id_centroMedico','=','centros_medicos.id_centroMedico')
+            ->where('detalle_centros_medicos.id_especialidad', $id_especialidad)
+            ->where('detalle_centros_medicos.id_centroMedico', $id_centroMedico)->get();
+
+        }
         return $medicos;
     }
 
