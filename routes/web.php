@@ -57,4 +57,5 @@ Route::get('/clear-cache', function () {
  Route::get('/infocentromedico/{id}', [App\Http\Controllers\CentrosMedicosController::class, 'obtener_centro_medico']);
  Route::get('/obtener_especialidad/{id_especialidad}', [App\Http\Controllers\EspecialidadesController::class, 'obtener_especialidad'])->name('obtener_especialidad');
  Route::get('/obtenerCentroMedico/{id_detalleCentroMed}', [App\Http\Controllers\DetalleCentroMedicoController::class, 'obtenerCentroMedico'])->name('obtenerCentroMedico');
-
+Route::view('reset_password','auth.reestablecer_password')->name('reset_password');
+Route::view('email_password','auth.passwords.email_password')->name('email_password');

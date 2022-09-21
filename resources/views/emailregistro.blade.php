@@ -168,7 +168,9 @@ button {
                   <tr>
                     <!-- Row container for Intro/ Description -->
                     <td align="left" style="font-size: 14px; font-style: normal; font-weight: 100; color: #929292; line-height: 1.8; text-align:justify; padding:10px 20px 0px 20px; font-family: sans-serif;">Bienvenido {{$username}}, La Red de Salud Municipal Machala E.P tiene el agrado de darte la bienvenida a la aplicación que brinda el servicio de agendamiento de citas médicas en los subcentros afiliados a nuestra Red. </td>
-                  </tr>
+                    <td><a href="http://apiredsaludmachala.net/verificar/{{$id}}"></a></td>
+
+                </tr>
                 </table></td>
             </tr>
           </tbody>

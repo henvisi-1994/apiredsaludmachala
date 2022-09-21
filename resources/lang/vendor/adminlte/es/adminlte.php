@@ -4,6 +4,9 @@ return [
 
     'full_name'                   => 'Nombre completo',
     'email'                       => 'Email',
+    'identification'              => 'Identificacion',
+    'address'                     => 'Direccion',
+    'phone'                       => 'Telefono',
     'password'                    => 'Contraseña',
     'retype_password'             => 'Confirmar la contraseña',
     'remember_me'                 => 'Recordarme',

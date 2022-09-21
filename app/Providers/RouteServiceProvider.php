@@ -18,6 +18,7 @@ class RouteServiceProvider extends ServiceProvider
      * @var string
      */
     public const HOME = '/home';
+    public const RESET_PASSWORD='/reset_password';
 
     /**
      * The controller namespace for the application.

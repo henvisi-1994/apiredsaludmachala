@@ -67,6 +67,8 @@ const app = new Vue({
             password_new: "",
             password_confirm: ""
         },
+        email: '',
+        estado_reset_password: false,
         id_especialidad_m: 0,
         auxiliar_m: [],
         search_citas: "",
@@ -1331,6 +1333,27 @@ const app = new Vue({
             }
 
         },
+        resetear: function() {
+            this.estado_reset_password = true;
+            let urlGuardarlogin = "/password/email";
+            let data = {
+                email: this.email
+            };
+            axios
+                .post(urlGuardarlogin, data)
+
+            .then(response => {
+                    this.estado_reset_password = false;
+                    window.location.href = "/email_password";
+
+                })
+                .catch(error => {
+                    toastr.error(error.response.data.messaje);
+                    this.errors = error.response.data;
+                });
+
+
+        },
         cambiarPassword: function() {
             let id_user = localStorage.getItem("id_user");
             let url = "api/cambiar_contrasena/" + id_user;
@@ -1491,6 +1514,7 @@ const app = new Vue({
                     this.errors = error.response.data;
                 });
         },
+
 
     }
 });
