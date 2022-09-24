@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Citas;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -81,6 +83,7 @@ class UsuarioController extends Controller
             $credenciales = [
                 'email' => $email,
                 'username' =>  $username,
+                'id' => Crypt::encrypt($usuario->id)
             ];
             Mail::send('emailregistro', $credenciales, function ($msj) use ($email, $username) {
                 $msj->to($email, $username);
@@ -119,6 +122,15 @@ class UsuarioController extends Controller
               /*else{
                 return response()->json(['mensaje'=>'Error al Guardar Registro'], 400);
             }*/
+
+    }
+    public function verificarCuenta($id){
+        $id= Crypt::decrypt($id);
+        $usuario = User::where('id', $id)->first();
+        $usuario->email_verified_at=Carbon::now();
+        $usuario->save();
+        return view('verificarcuenta');
+
 
     }
 
@@ -269,6 +281,6 @@ class UsuarioController extends Controller
     public function __construct()
     {
         //['index','noticias']
-        $this->middleware('auth:sanctum')->except(['index', 'store', 'update_perfil','validar_datos']);
+        $this->middleware('auth:sanctum')->except(['index', 'store', 'update_perfil','validar_datos','verificarCuenta']);
     }
 }

@@ -28,7 +28,9 @@ class AuthController extends Controller
                 'telefono' => $user->telefono,
                 'direccion' => $user->direccion,
                 'clave' => $user->password,
-                'id' => $user->id
+                'id' => $user->id,
+                'email_verified_at' => $user->email_verified_at
+
             ]);
         } else {
             return response()->json([

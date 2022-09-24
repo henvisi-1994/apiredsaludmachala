@@ -69,6 +69,8 @@ Route::get('/obtener_citas', [App\Http\Controllers\CitasController::class, 'obte
 //Ruta de Gestion de Pago
 Route::get('/obetener_token_pago', [App\Http\Controllers\GestionPagoController::class, 'index']);
 Route::get('/obtener_tarjeta/{identificacion}', [App\Http\Controllers\GestionPagoController::class, 'obtener_tarjeta']);
+Route::post('/refund', [App\Http\Controllers\GestionPagoController::class, 'reembolso']);
+
 //Rutas de EmailCitas
 Route::post('/email_cita', [App\Http\Controllers\CitasController::class, 'email_cita'])->name('email_cita');
 //Rutas de EmailComprobante

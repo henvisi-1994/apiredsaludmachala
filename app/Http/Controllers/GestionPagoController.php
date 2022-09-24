@@ -103,8 +103,9 @@ class GestionPagoController extends Controller
         $response = Http::withHeaders([
             'Auth-Token' => $auth_token
         ])->post('https://ccapi.paymentez.com/v2/transaction/refund/', [
-            'transaction.id	' => $request->id_transaction,
+            'transaction' => ['id'=>$request->id_transaction],
         ]);
+        return $response;
     }
 
     public function __construct()
