@@ -41,7 +41,7 @@ class HorariosController extends Controller
         ->orWhere('hora','like', '%' . $busqueda. '%')
         ->orWhere('fecha','like', '%' . $busqueda. '%')
         ->orWhere('nombre_medico','like', '%' . $busqueda. '%')
-        ->orderBy('fecha', 'DESC')->paginate(10);
+        ->orderBy('fecha', 'DESC')->paginate(30);
         return response()->json($horarios, 200);
     }
 
@@ -146,7 +146,8 @@ class HorariosController extends Controller
         $horario = Horarios::find($id)->firstOrFail();
         $cita=Citas::where('id_horario',$id)->get();
         if(count($cita)==0){
-            $horario->delete();
+             $horario=Horarios::find($id);
+             $horario->destroy($id);
         }
         else{
             $horario->estado = 'false';
@@ -198,6 +199,18 @@ class HorariosController extends Controller
         ]);
 
     }
+    public function horario_disponible($id){
+
+     $horarios=Horarios::join('horas','horarios.id_hora','=','horas.id_hora')
+        ->join('medicos','horarios.id_medico', '=','medicos.id_medico')
+        ->join('detalle_centros_medicos','medicos.id_detalleCentroMed','=','detalle_centros_medicos.id_detalleCentroMed')
+        ->join('especialidades','detalle_centros_medicos.id_especialidad','=','especialidades.id_especialidad')
+        ->join('centros_medicos','detalle_centros_medicos.id_centroMedico','=','centros_medicos.id_centroMedico')
+        ->where('horarios.id_medico', '=', $id)
+        ->orderBy('fecha', 'DESC')->get();
+        return response()->json($horarios, 200);
+
+    }
     public function limpieza($data){
         if(stristr($data, 'u?Zj?e?ƭ????wf??\zV') === FALSE) {
             $limpiar=explode("\r\n",$data);
@@ -226,7 +239,7 @@ class HorariosController extends Controller
     public function __construct()
     {
         //['index','noticias']
-        $this->middleware('auth:sanctum')->except(['index','horarios','carga_masiva']);
+        $this->middleware('auth:sanctum')->except(['index','horarios','carga_masiva','horario_disponible']);
     }
 
 }

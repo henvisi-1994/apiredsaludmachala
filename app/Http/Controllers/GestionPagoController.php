@@ -48,9 +48,9 @@ class GestionPagoController extends Controller
 
     }
     public function obtener_tarjeta($identificacion){
-        $url="https://ccapi-stg.paymentez.com/v2/card/list?uid=".$identificacion;
-        $API_LOGIN_DEV     = env('API_LOGIN_DEV', null);
-        $API_KEY_DEV       = env('API_KEY_DEV', null);
+        $url="https://ccapi.paymentez.com/v2/card/list?uid=".$identificacion;
+        $API_LOGIN_DEV     = env('API_LOGIN_DEV', 'MUNICSALUDMACH-EC-SERVER');
+        $API_KEY_DEV       = env('API_KEY_DEV', 'sUYNITbsdvNiHg08bK9AckmHQcCF3V');
         $server_application_code = $API_LOGIN_DEV;
         $server_app_key = $API_KEY_DEV;
         $unix_timestamp = Carbon::now()->timestamp; // Produces something like 1552296328
@@ -111,7 +111,7 @@ class GestionPagoController extends Controller
     public function __construct()
     {
         //['index','noticias']
-        $this->middleware('auth:sanctum')->except(['index','obtener_tarjeta','status','obtener_timestamp','obtenerTokenCliente']);
+        $this->middleware('auth:sanctum')->except(['index','obtener_tarjeta','status','obtener_timestamp','obtenerTokenCliente','reembolso']);
     }
     public function status(Request $request){
         $status ='Ha realizado el pago correctamente';

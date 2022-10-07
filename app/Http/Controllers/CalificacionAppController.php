@@ -32,7 +32,7 @@ class CalificacionAppController extends Controller
             }
     }
     public function index(){
-        $calificaciones = DB::select('select calificacion.id_cita,calificacion,comentario,nombre_medico,nombre_especialidad,"nombre_centroMedico",fecha,hora from calificacion
+        $calificaciones = DB::select('select calificacion.id_cita,calificacion,comentario,nombre_medico,nombre_especialidad,nombre_centroMedico,fecha,hora from calificacion
         inner join v_citas on calificacion.id_cita=v_citas.id_cita');
         return $calificaciones;
     }

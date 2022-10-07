@@ -37,8 +37,12 @@ class EspecialidadesController extends Controller
     }
 	public function especialidad_cm($id_centroMedico)
     {
-        $especialidades = DetalleCentrosMedicos::where('id_centroMedico',$id_centroMedico)->join('especialidades', 'detalle_centros_medicos.id_especialidad', '=', 'especialidades.id_especialidad')->get();
-        //$especialidades = DetalleCentrosMedicos::where('id_centroMedico',$id_centroMedico)->get();
+        if($id_centroMedico!=0){
+            $especialidades = DetalleCentrosMedicos::where('id_centroMedico',$id_centroMedico)->join('especialidades', 'detalle_centros_medicos.id_especialidad', '=', 'especialidades.id_especialidad')->get();
+        }else{
+            $especialidades = DB::select('select DISTINCT nombre_especialidad, id_especialidad,valor from v_medico_prod');
+        }
+
         return $especialidades;
     }
 
@@ -50,12 +54,7 @@ class EspecialidadesController extends Controller
     }
         public function obtener_especialidades_med_prod()
     {
-        if (Cache::has('especialidades_med_prod')) {
-            $especialidades = Cache::get('especialidades_med_prod');
-        } else {
-            $especialidades = DB::select('select DISTINCT nombre_especialidad, id_especialidad from v_medico_prod');
-            Cache::put('especialidades_med_prod', $especialidades);
-        }
+        $especialidades = DB::select('select DISTINCT nombre_especialidad, id_especialidad from v_medico_prod');
         return $especialidades;
     }
     public function obtener_especialidades_med_prod2()

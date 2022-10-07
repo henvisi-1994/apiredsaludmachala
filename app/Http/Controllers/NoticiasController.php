@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Noticias;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 
 
@@ -59,7 +59,7 @@ class NoticiasController extends Controller
             list(, $imageData) = explode(',', $imageData);
             $name = $request->titulo_noticia.Carbon::now()->timestamp . '.' . $extension;
             $source = fopen($request->imagen_noticia, 'r');
-            $destination = fopen(public_path() . '/img/noticia/' . $name, 'w');
+            $destination = fopen('/home/saludmac/apiapp.saludmachala.gob.ec/img/noticia/' . $name, 'w');
             stream_copy_to_stream($source, $destination);
 
             fclose($source);
@@ -124,7 +124,7 @@ class NoticiasController extends Controller
                 list(, $imageData) = explode(',', $imageData);
                 $name = $request->titulo_noticia.Carbon::now()->timestamp . '.' . $extension;
                 $source = fopen($request->imagen_noticia, 'r');
-                $destination = fopen(public_path() . '/img/noticia/' . $name, 'w');
+                $destination = fopen('/home/saludmac/apiapp.saludmachala.gob.ec/img/noticia/' . $name, 'w');
                 stream_copy_to_stream($source, $destination);
 
                 fclose($source);

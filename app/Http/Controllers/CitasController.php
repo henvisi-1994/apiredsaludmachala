@@ -80,12 +80,11 @@ class CitasController extends Controller
     public function email_cita(Request $request)
     {
         $cita=Citas::
-        join('medico', 'citas.id_medico', '=', 'medico.id_medico')->
-        join('detalle_centros_medicos','medico.id_detalleCentroMed','=','detalle_centros_medicos.id_detalleCentroMed')->
+        join('medicos', 'citas.id_medico', '=', 'medicos.id_medico')->
+        join('detalle_centros_medicos','medicos.id_detalleCentroMed','=','detalle_centros_medicos.id_detalleCentroMed')->
         join('centros_medicos','detalle_centros_medicos.id_centroMedico','=','centros_medicos.id_centroMedico')->
         where("citas.id_medico",$request->input('id_medico'))->first();
         $email=$cita->email;
-
         $especialidad = $request->input('nombre_especialidad');
         $nomb_centro_medico = $request->input('nombre_centroMedico');
         $nomb_medico = $request->input('nombre_medico');
